@@ -1,0 +1,35 @@
+Package: betaHMM
+Type: Package
+Title: A hidden Markov model approach for identifying differentially 
+        methylated sites and regions for beta-valued DNA methylation data
+Version: 0.3.0
+Authors@R: c(person("Koyel","Majumdar",email="koyel.majumdar@ucdconnect.ie",
+        role=c("cre","aut")),
+        person("Andrea","Rau",email="andrea.rau@inrae.fr",role="aut",
+        comment = c(ORCID = "0000-0001-6469-488X")),
+        person("Florence","Jaffrezic",email="florence.jaffrezic@inrae.fr",
+        role="aut"),
+        person("Isobel Claire","Gorley",email="claire.gormley@ucd.ie",
+        role="aut", comment=c(ORCID="0000-0001-7713-681X")),
+        person("Thomas Brendan","Murphy",email="brendan.murphy@ucd.ie",
+        role="aut",comment=c(ORCID="0000-0002-5668-7046")))
+Maintainer: Koyel Majumdar <koyel.majumdar@ucdconnect.ie>
+Description: A novel approach utilizing a homogeneous hidden Markov model and
+            effectively model untransformed beta values to identify DMCs while 
+            considering the spatial correlation of the adjacent CpG sites.
+License: GPL-3
+Encoding: UTF-8
+Imports: betaclust,
+         stats, 
+         utils, 
+         ggplot2, 
+         plotly, 
+         scales,
+         methods
+Depends: R (>= 3.5.0), SummarizedExperiment, S4Vectors
+LazyData: true
+RoxygenNote: 7.2.3
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
