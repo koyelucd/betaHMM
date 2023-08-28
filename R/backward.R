@@ -1,24 +1,25 @@
 #' @title Backward algorithm
-#' @description Compute the backward probabilities for the BHMM model.
-#' @details Computes the backward probabilities for the number of hidden states
+#' @description Computes the backward probabilities for \eqn{K} hidden states
 #'          using the initial distribution, transition matrix and distribution
 #'          parameters.
 #' @export
-#' @param probabilities Probability calculated based on the initialised
-#'                      model parameters.
-#' @param trained_params A list containing the initialised parameters for the
-#'                       BHMM (initial distribution, transition matrix,
-#'                      shape parameters for the observation data distribution).
+#' @param probabilities A matrix containing the marginal probability
+#' distribution of the \eqn{K} states within the Markov model.
+#' @param trained_params A list containing the initialised shape parameters for
+#' the betaHMM model (initial distribution, transition matrix, shape parameters
+#' for the observed data).
 #' @return A list containing:
 #' \itemize{
-#'    \item log_beta - The backward probabilities.
+#'    \item log_beta - A \eqn{C*K} matrix (where \eqn{C} is the number of CpG
+#'    sites and \eqn{K} is the number of hidden states) containing the
+#'    logarithmized backward probabilities.
 #'    \item scaled_logL - The log-likelihood calculated using the backward
 #'                        probabilities.
 #'    }
 
-backward <- function(probabilities,trained_params){
-  C = nrow(probabilities)
-  K = ncol(probabilities)
+backward <- function(probabilities, trained_params){
+  C <- nrow(probabilities)
+  K <- ncol(probabilities)
   log_beta <- matrix(0, nrow = C, ncol = K)
   log_beta[C,] <- rep(0,K)
   beta <- rep(1 / K, K)
@@ -33,5 +34,5 @@ backward <- function(probabilities,trained_params){
   }
 
   #backward_probabilities<-list(log_beta=log_beta,scaled_logL=scaled_logL)
-  return(list(log_beta=log_beta,scaled_logL=scaled_logL))
+  return(list(log_beta = log_beta, scaled_logL = scaled_logL))
 }

@@ -26,8 +26,10 @@ setClass("betaHMMResults",
 #' objects from the betaHMM package. It is used by
 #' to wrap up the results table.
 #'
-#' @param SummarizedExperiment a \code{RangedSummarizedExperiment} of \code{betaHMM} results
-#' @param annotatedData The annotated data passed as an input argument to the betaHMM package.
+#' @param SummarizedExperiment a \code{RangedSummarizedExperiment} of
+#' \code{betaHMM} results
+#' @param annotatedData The annotated data passed as an input argument to
+#' the betaHMM package.
 #'
 #'
 #' @return a betaHMMResults object
@@ -42,7 +44,8 @@ betaHMMResults <- function(SummarizedExperiment,
   if (!is(se, "RangedSummarizedExperiment")) {
     stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
   }
-  if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0, nrow=0, ncol=0))
+  if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
+                                                               nrow=0, ncol=0))
   object <- new("betaHMMResults", se, annotatedData=annotatedData)
   return(object)
 }
@@ -61,19 +64,22 @@ setClass("dmrResults",
 #' dmrResults object and constructor
 #'
 #' \code{dmrResults} is a subclass of \code{RangedSummarizedExperiment},
-#' used to store the dmrs identified.
+#' used to store the DMRs identified.
 #'
 #' This constructor function would not typically be used by "end users".
 #' This simple class extends the \code{RangedSummarizedExperiment} class of the
 #' SummarizedExperiment package
 #' to allow other packages to write methods for results
-#' objects from the betaHMM package. It is used by
+#' objects from the
+#' \code{\link[betaHMM:dmr_identification]{dmr_identification}} function.
+#' It is used by
 #' to wrap up the results table.
 #'
-#' @param SummarizedExperiment a \code{RangedSummarizedExperiment} of \code{dmr_identification} results.
+#' @param SummarizedExperiment a \code{dmrResults}
+#' results.
 #'
 #'
-#' @return a dmrResults object
+#' @return a  \code{\link[betaHMM:dmrResults]{dmrResults}} object
 #' @docType class
 #' @rdname dmrResults
 #' @importClassesFrom S4Vectors DataFrame
@@ -84,8 +90,112 @@ dmrResults <- function(SummarizedExperiment) {
   if (!is(se, "RangedSummarizedExperiment")) {
     stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
   }
-  if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0, nrow=0, ncol=0))
+
   object <- new("dmrResults", se)
   return(object)
 }
 
+
+
+
+#' @rdname dmcResults
+#' @export
+#' @import SummarizedExperiment
+
+setClass("dmcResults",
+         contains = "RangedSummarizedExperiment")
+
+## TODO:
+## setValidity( ... )
+
+
+#' dmcResults object and constructor
+#'
+#' \code{dmcResults} is a subclass of \code{RangedSummarizedExperiment},
+#' used to store the DMCs identified.
+#'
+#' This constructor function would not typically be used by "end users".
+#' This simple class extends the \code{RangedSummarizedExperiment} class of the
+#' SummarizedExperiment package
+#' to allow other packages to write methods for results
+#' objects from the
+#' \code{\link[betaHMM:dmc_identification]{dmc_identification}} function.
+#' It is used by
+#' to wrap up the results table.
+#'
+#' @param SummarizedExperiment a \code{RangedSummarizedExperiment} of
+#' \code{dmcResults} results.
+#'
+#'
+#' @return a \code{\link[betaHMM:dmcResults]{dmcResults}} object
+#' @docType class
+#' @rdname dmcResults
+#' @importClassesFrom S4Vectors DataFrame
+#' @importFrom S4Vectors DataFrame
+#' @export
+dmcResults <- function(SummarizedExperiment) {
+  se <- SummarizedExperiment
+  if (!is(se, "RangedSummarizedExperiment")) {
+    stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
+  }
+
+  object <- new("dmcResults", se)
+  return(object)
+}
+
+
+## Threshold definition
+
+#' @rdname threshold_Results
+#' @export
+#' @import SummarizedExperiment
+
+setClass("threshold_Results",
+         contains = "RangedSummarizedExperiment",
+         representation = representation(
+           annotatedData="DataFrame"
+
+         ))
+
+## TODO:
+## setValidity( ... )
+
+
+#' threshold_Results object and constructor
+#'
+#' \code{threshold_Results} is a subclass of \code{RangedSummarizedExperiment},
+#' used to store the threshold_identification results as well as the annotated
+#'  data useful for plotting.
+#'
+#' This constructor function would not typically be used by "end users".
+#' This simple class extends the \code{RangedSummarizedExperiment} class of the
+#' SummarizedExperiment package
+#' to allow other packages to write methods for results
+#' objects from the
+#' \code{\link[betaHMM:threshold_identification]{threshold_identification}}
+#' function. It is used by
+#' to wrap up the results table.
+#'
+#' @param SummarizedExperiment a \code{RangedSummarizedExperiment} of
+#' \code{threshold_Results} object.
+#' @param annotatedData The annotated data passed as an input argument to
+#' the \code{threshold_identification} function.
+#'
+#'
+#' @return a \code{\link[betaHMM:threshold_Results]{threshold_Results}} object
+#' @docType class
+#' @rdname threshold_Results
+#' @importClassesFrom S4Vectors DataFrame
+#' @importFrom S4Vectors DataFrame
+#' @export
+threshold_Results <- function(SummarizedExperiment,
+                           annotatedData) {
+  se <- SummarizedExperiment
+  if (!is(se, "RangedSummarizedExperiment")) {
+    stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
+  }
+  if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
+                                                               nrow=0, ncol=0))
+  object <- new("threshold_Results", se, annotatedData=annotatedData)
+  return(object)
+}

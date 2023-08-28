@@ -12,31 +12,26 @@ methylation values for \eqn{C} CpG sites from \eqn{R}
 treatment groups each having \eqn{N} replicates or each collected
 from \eqn{N} patients.}
 
-\item{M}{Number of methylation states to be identified in a DNA sample.}
+\item{M}{Number of methylation states to be identified in a single DNA sample.}
 
-\item{N}{Number of patients or DNA sample replicates collected for each
+\item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
 
 \item{R}{Number of treatment groups (For. eg: Benign and Tumour).}
 
-\item{tau}{The initial distribution for the BHMM model.}
+\item{tau}{The initial distribution for the betaHMM model.}
 
-\item{A}{The transition matrix for the BHMM model.}
+\item{A}{The transition matrix for the betaHMM model.}
 
 \item{phi}{The shape parameters for the observation sequence data
-in the BHMM model.}
+in the betaHMM model.}
 }
 \value{
 A vector containing the most probable sequence of the hidden states
-        of the BHMM model.
+        of the betaHMM model.
 }
 \description{
 The Viterbi algorithm is used to estimate the most probable
-             sequence of the hidden states utilizing the BHMM model
-             parameters estimated by the Baum-Welch algorithm.
-}
-\details{
-The Viterbi algorithm is used to estimate the most probable
-             sequence of the hidden states utilizing the BHMM model
+             sequence of the hidden states utilizing the betaHMM model
              parameters estimated by the Baum-Welch algorithm.
 }

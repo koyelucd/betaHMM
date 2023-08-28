@@ -2,36 +2,71 @@
 % Please edit documentation in R/AllGenerics.R, R/methods.R
 \name{dmr_identification}
 \alias{dmr_identification}
-\alias{dmr_identification,betaHMMResults-method}
+\alias{dmr_identification,dmcResults-method}
 \alias{dmr_identification-methods}
-\title{DMR identification from DMCs}
+\alias{dmr_identification,matrix-method}
+\alias{dmr_identification,data.frame-method}
+\title{DMR identification from DMCs identified}
 \usage{
-dmr_identification(object, ...)
+dmr_identification(dmc_identification_object, ...)
 
-\S4method{dmr_identification}{betaHMMResults}(object, diff_meth_cluster = 1, ...)
+\S4method{dmr_identification}{dmcResults}(dmc_identification_object, DMC_count = 2, ...)
+
+\S4method{dmr_identification}{matrix}(dmc_identification_object, DMC_count = 2, ...)
+
+\S4method{dmr_identification}{data.frame}(dmc_identification_object, DMC_count = 2, ...)
 }
 \arguments{
-\item{object}{a \code{betaHMMResults} object.}
+\item{dmc_identification_object}{a
+\code{\link[betaHMM:dmcResults]{dmcResults}} object or the assay data
+from the dmcResults.}
 
 \item{...}{extra arguments}
 
-\item{diff_meth_cluster}{The clusters identified as differentially methylated}
+\item{DMC_count}{The minimal number of consecutive CpGs in a DMR.}
 }
 \value{
-A dataframe containing the following columns:
-\itemize{
-\item start_CpG - The starting CpG site in the particular DMR
-\item end_CpG -  The ending CpG site in the particular DMR
-\item DMR_size - Number of CPG sites identified in the DMR
-\item chr_dmr - The chromosome corresponding to the CpG sites in the DMR.
-\item map_start - MAPINFO of starting CpG site in the particular DMR
-\item map_end -  MAPINFO of the ending CpG site in the particular DMR}
+An S4 object of class \code{\link[betaHMM:dmrResults]{dmrResults}}
+where the CpG site information for each DMR is stored as a SimpleList
+of assay data and the chromosomes analysed by the model is stored as
+the metadata.
 }
 \description{
-Function to identify the DMRs for the DMCs identified using BHMM
+This is the primary user interface for the
+\code{\link[betaHMM:dmr_identification]{dmr_identification}} function.
+Generic S4 methods are implemented to identify the DMRs from the DMCs
+identified in each chromosome. The supported classes are \code{data.frame}
+and \code{\link[betaHMM:dmcResults]{dmcResults}} object. The output is an
+ S4 object of class \code{\link[betaHMM:dmrResults]{dmrResults}}.
 }
-\details{
-Function to identify the DMRs for the DMCs identified using BHMM
+\examples{
+## Use simulated data for the betaHMM workflow example
+set.seed(12345)
+
+## read files
+methylation_data <- sample_methylation_file
+annotation_data <- sample_annotation_file
+## Run betaHMM function
+beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+                    parallel_process = FALSE, seed = 12345,
+                    treatment_group = c("Benign","Tumour"))
+
+## Run dmc_identification function
+dmc_out <- dmc_identification(beta_out)
+dmc_df <- assay(dmc_out)
+
+# Run dmr_identification function
+dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
+#
+# Plot functions
+# Get the AUC values calculated for each hidden state
+AUC_chr <- AUC(dmc_out)
+
+## plot the fitted density estimates
+plot(beta_out, chromosome = "1", what = "fitted density", AUC = AUC_chr)
+
+## Plot the DMR graph
+plot(dmc_out, start_CpG = "cg14817997", end_CpG = 8)
 }
 \seealso{
 \code{\link{betaHMM}}

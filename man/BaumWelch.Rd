@@ -2,27 +2,26 @@
 % Please edit documentation in R/BaumWelch.R
 \name{BaumWelch}
 \alias{BaumWelch}
-\title{Estimation Using the Baum-Welch Algorithm}
+\title{HMM parameter estimation using Baum-Welch algorithm}
 \usage{
 BaumWelch(data, trained_params, M, N, R, n.iter = 100, seed = NULL)
 }
 \arguments{
 \item{data}{A dataframe of dimension \eqn{C \times (N \times R)} containing
 methylation values for \eqn{C} CpG sites from \eqn{R}
-treatment groups each having \eqn{N} replicates or each collected
-from \eqn{N} patients.}
+treatment groups each having \eqn{N} DNA samples.}
 
-\item{trained_params}{A list containing the initialised model parameters:
+\item{trained_params}{A list containing the initialized model parameters:
 \itemize{
-   \item A - The transition matrix for the BHMM model.
-   \item tau - The initial distribution for the BHMM model.
+   \item A - The transition matrix for the betaHMM model.
+   \item tau - The initial distribution for the betaHMM model.
    \item phi - The shape parameters for the observation sequence data
-               in the BHMM model.
+               in the betaHMM model.
    }}
 
-\item{M}{Number of methylation states to be identified in a DNA sample.}
+\item{M}{Number of methylation states to be identified in a single DNA sample.}
 
-\item{N}{Number of patients or DNA sample replicates collected for each
+\item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
 
 \item{R}{Number of treatment groups (For. eg: Benign and Tumour).}
@@ -34,22 +33,19 @@ treatment group.}
 \value{
 A list containing:
 \itemize{
-   \item A - The transition matrix for the BHMM model.
-   \item tau - The initial distribution for the BHMM model.
-   \item phi - The shape parameters for the observation sequence data
-               in the BHMM model.
+   \item A - The transition matrix estimated for the betaHMM model.
+   \item tau - The initial distribution estimated for the betaHMM model.
+   \item phi - The shape parameters estimated for the observed data
+               in the betaHMM model.
    \item log_vec - A vector containing the log-likelihood values calculated
                    for each iteration of the algorithm.
-   \item z - A matrix of dimension \eqn{C \times K} containing the posterior
-             probability of each CpG site belonging to each of the
-             \eqn{K} clusters.
+   \item z - A matrix of dimension \eqn{C \times K} containing the conditional
+    posterior probability of each CpG site belonging to each of the
+     \eqn{K} hidden states.
    }
 }
 \description{
-The Baum-Welch algorithm is used to estimate the parameters of
-             the beta distributed hidden Markov model (BHMM).
-}
-\details{
-The Baum-Welch algorithm is used to estimate the parameters of
-             the beta distributed hidden Markov model (BHMM).
+The function determines the parameters of a homogeneous
+ beta hidden Markov model (betaHMM), wherein the Baum-Welch algorithm
+ constitutes a variant of the EM (Estimation-Maximization) procedure.
 }

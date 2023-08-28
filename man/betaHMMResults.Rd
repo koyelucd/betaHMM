@@ -9,9 +9,11 @@
 betaHMMResults(SummarizedExperiment, annotatedData)
 }
 \arguments{
-\item{SummarizedExperiment}{a \code{RangedSummarizedExperiment} of \code{betaHMM} results}
+\item{SummarizedExperiment}{a \code{RangedSummarizedExperiment} of
+\code{betaHMM} results}
 
-\item{annotatedData}{The annotated data passed as an input argument to the betaHMM package.}
+\item{annotatedData}{The annotated data passed as an input argument to
+the betaHMM package.}
 }
 \value{
 a betaHMMResults object

@@ -9,20 +9,23 @@
 dmrResults(SummarizedExperiment)
 }
 \arguments{
-\item{SummarizedExperiment}{a \code{RangedSummarizedExperiment} of \code{dmr_identification} results.}
+\item{SummarizedExperiment}{a \code{dmrResults}
+results.}
 }
 \value{
-a dmrResults object
+a  \code{\link[betaHMM:dmrResults]{dmrResults}} object
 }
 \description{
 \code{dmrResults} is a subclass of \code{RangedSummarizedExperiment},
-used to store the dmrs identified.
+used to store the DMRs identified.
 }
 \details{
 This constructor function would not typically be used by "end users".
 This simple class extends the \code{RangedSummarizedExperiment} class of the
 SummarizedExperiment package
 to allow other packages to write methods for results
-objects from the betaHMM package. It is used by
+objects from the
+\code{\link[betaHMM:dmr_identification]{dmr_identification}} function.
+It is used by
 to wrap up the results table.
 }

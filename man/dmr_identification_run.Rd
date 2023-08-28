@@ -2,30 +2,70 @@
 % Please edit documentation in R/general-functions.R
 \name{dmr_identification_run}
 \alias{dmr_identification_run}
-\title{DMR identification from DMCs}
+\title{DMR identification from DMCs identified}
 \usage{
-dmr_identification_run(object, diff_meth_cluster, ...)
+dmr_identification_run(
+  dmc_identification_object,
+  DMC_count = 2,
+  parallel_process = FALSE,
+  ...
+)
 }
 \arguments{
-\item{object}{A \code{\link[betaHMM:betaHMM]{betaHMM}} object.}
+\item{dmc_identification_object}{a \code{dmcResults} object or the assay data
+from the dmcResults.}
 
-\item{diff_meth_cluster}{The clusters identified as differentially methylated}
+\item{DMC_count}{The minimal number of consecutive CpGs in a DMR.}
+
+\item{parallel_process}{The "TRUE" option results in parallel processing of
+the DMCs from each chromosome for increased computational efficiency.
+ The default option has been set as "FALSE" due to package testing limitations.}
 
 \item{...}{extra arguments}
 }
 \value{
-A dataframe containing the following columns:
+A \code{\link[betaHMM:dmrResults]{dmrResults}}
+object containing a SimpleList of assay data containing the following data:
 \itemize{
-\item start_CpG - The starting CpG site in the particular DMR
-\item end_CpG -  The ending CpG site in the particular DMR
+\item start_CpG - The starting CpG site IlmnID in the particular DMR
+\item end_CpG -  The ending CpG site IlmnID in the particular DMR
 \item DMR_size - Number of CPG sites identified in the DMR
 \item chr_dmr - The chromosome corresponding to the CpG sites in the DMR.
 \item map_start - MAPINFO of starting CpG site in the particular DMR
 \item map_end -  MAPINFO of the ending CpG site in the particular DMR}
+The object also returns the chromosomes analysed by the betaHMM model as
+the metadata.
 }
 \description{
-Function to identify the DMRs for the DMCs identified using BHMM
+Function to identify the DMRs from the DMCs identified in each
+chromosome.
 }
-\details{
-Function to identify the DMRs for the DMCs identified using BHMM
+\examples{
+## Use simulated data for the betaHMM workflow example
+set.seed(12345)
+
+## read files
+methylation_data <- sample_methylation_file
+annotation_data <- sample_annotation_file
+## Run betaHMM function
+beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+                    parallel_process = FALSE, seed = 12345,
+                    treatment_group = c("Benign","Tumour"))
+
+## Run dmc_identification function
+dmc_out <- dmc_identification(beta_out)
+dmc_df <- assay(dmc_out)
+
+# Run dmr_identification function
+dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
+#
+# Plot functions
+# Get the AUC values calculated for each hidden state
+AUC_chr <- AUC(dmc_out)
+
+## plot the fitted density estimates
+plot(beta_out, chromosome = "1", what = "fitted density", AUC = AUC_chr)
+
+## Plot the DMR graph
+plot(dmc_out, start_CpG = "cg14817997", end_CpG = 8)
 }

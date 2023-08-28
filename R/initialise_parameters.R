@@ -22,42 +22,54 @@
 #' @importFrom stats kmeans
 #' @importFrom stats sd
 
-initialise_parameters <- function(data,M,N,R,seed=NULL){
-  K=M^R
+initialise_parameters <- function(data, M, N, R, seed = NULL){
+  K <- M^R
 
   A <- 0.6 * diag(K) + rep(0.05 / K, K)  ## transmission probabilities
   tau <- rep(1 / K, K)                  ## initial mixing proportions
 
-  sh_p1=list()
-  sh_p2=list()
-  n1=1
-  n2=N
+  sh_p1 <- list()
+  sh_p2 <- list()
+  n1 <- 1
+  n2 <- N[1]
+  data_ilmnid <- data[ ,"IlmnID"]
+  data <- subset(data, select = -c( IlmnID))
   for(r in 1:R)
   {
-    threshold_out<-threshold_identification(data[,n1:n2],M=3,N,
-                                            parameter_estimation_only=TRUE,
-                                            seed=321)
-    alpha=threshold_out$model_params$phi$sp_1
-    beta=threshold_out$model_params$phi$sp_2
-    alpha<-sort(alpha)
-    delta<-sort(beta,decreasing = T)
-    alpha[2]=1
-    delta[2]=1
-    sh_p1[[r]]=alpha
-    sh_p2[[r]]=delta
+    data_th <- cbind(data_ilmnid,data[ ,n1:n2])
+    data_th <- as.data.frame(data_th)
+    colnames(data_th)[1] <- "IlmnID"
+    threshold_out <- threshold_identification(data_th,
+                                            package_workflow = TRUE,
+                                            M = 3, N[r],
+                                            parameter_estimation_only = TRUE,
+                                            seed = 321)
+    model_params <- model_parameters(threshold_out)
+    alpha <- model_params$phi$sp_1
+    beta <- model_params$phi$sp_2
+    alpha <- sort(alpha)
+    delta <- sort(beta,decreasing = T)
+    alpha[2] <- 1
+    delta[2] <- 1
+    sh_p1[[r]] = alpha
+    sh_p2[[r]] = delta
 
-    n1=n1+N
-    n2=n2+N
+    if((r+1) <= R)
+    {
+      n1 <- n1 + N[r]
+      n2 <- n2 + N[r+1]
+    }
+
   }
-  x1=do.call(expand.grid,sh_p1)
-  x2=do.call(expand.grid,sh_p2)
-  x1=t(x1)
-  x2=t(x2)
+  x1 <- do.call(expand.grid, sh_p1)
+  x2 <- do.call(expand.grid, sh_p2)
+  x1 <- t(x1)
+  x2 <- t(x2)
 
-  phi<-list(sp_1=x1, sp_2=x2)
-  rownames(phi$sp_1)<-NULL
-  rownames(phi$sp_2)<-NULL
+  phi <- list(sp_1=x1, sp_2=x2)
+  rownames(phi$sp_1) <- NULL
+  rownames(phi$sp_2) <- NULL
 
 
-  return(list(A=A,tau=tau,phi=phi))
+  return(list(A = A, tau = tau, phi = phi))
 }

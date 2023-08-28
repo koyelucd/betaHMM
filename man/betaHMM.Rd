@@ -3,25 +3,129 @@
 \docType{methods}
 \name{betaHMM}
 \alias{betaHMM}
-\alias{betaHMM,matrix-method}
+\alias{betaHMM,matrix,matrix-method}
 \alias{betaHMM-methods}
-\alias{betaHMM,data.frame-method}
+\alias{betaHMM,data.frame,data.frame-method}
+\alias{betaHMM,RangedSummarizedExperiment,RangedSummarizedExperiment.-method}
+\alias{betaHMM,matrix,data.frame-method}
+\alias{betaHMM,matrix,RangedSummarizedExperiment.-method}
+\alias{betaHMM,data.frame,matrix-method}
+\alias{betaHMM,data.frame,RangedSummarizedExperiment.-method}
+\alias{betaHMM,RangedSummarizedExperiment,data.frame-method}
+\alias{betaHMM,RangedSummarizedExperiment,matrix-method}
+\alias{betaHMM,RangedSummarizedExperiment,RangedSummarizedExperiment-method}
+\alias{betaHMM,matrix,RangedSummarizedExperiment-method}
+\alias{betaHMM,data.frame,RangedSummarizedExperiment-method}
 \title{HMM for beta valued DNA data}
 \usage{
-betaHMM(object, ...)
+betaHMM(methylation_data, annotation_file, ...)
 
-\S4method{betaHMM}{matrix}(object, M = 3, N = 4, R = 2, seed = NULL, ...)
+\S4method{betaHMM}{matrix,matrix}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
 
-\S4method{betaHMM}{data.frame}(object, M = 3, N = 4, R = 2, seed = NULL, ...)
+\S4method{betaHMM}{data.frame,data.frame}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{RangedSummarizedExperiment,RangedSummarizedExperiment}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{RangedSummarizedExperiment,matrix}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{RangedSummarizedExperiment,data.frame}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{matrix,RangedSummarizedExperiment}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{data.frame,RangedSummarizedExperiment}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{matrix,data.frame}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
+
+\S4method{betaHMM}{data.frame,matrix}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  seed = NULL,
+  ...
+)
 }
 \arguments{
-\item{object}{Annotated data to be clustered. Maybe provided as a matrix or dataframe.}
+\item{methylation_data}{A dataframe of dimension \eqn{(C \times (N \times R)
+)+1} containing methylation values for \eqn{C} CpG sites from \eqn{R}
+            treatment groups each having \eqn{N} DNA samples and the IlmnID
+            for each CpG site. Maybe provided as a matrix or data.frame
+or RangedSummarizedExperiment object.}
+
+\item{annotation_file}{A dataframe containing the EPIC methylation
+annotation file. Maybe provided as a matrix or data.frame
+or RangedSummarizedExperiment object.}
 
 \item{...}{Extra arguments}
 
-\item{M}{Number of methylation states to be identified in a DNA sample.}
+\item{M}{Number of methylation states to be identified in a single DNA sample.}
 
-\item{N}{Number of patients or DNA sample replicates collected for each
+\item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
 
 \item{R}{Number of treatment groups (For. eg: Benign and Tumour).}
@@ -29,14 +133,48 @@ treatment group.}
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
 }
 \value{
-An S4 object of class \code{betaHMMResults}.
+An S4 object of class \code{betaHMMResults}, where conditional probabilities
+of each CpG site belonging to a hidden state is stored as a SimpleList of
+assay data, and the corresponding estimated model parameters, log-likelihood
+values, and most probable hidden state sequence for each chromosome are
+stored as metadata.
 }
 \description{
-This is the primary user interface for the \code{betaHMM} package.
-Generic S4 methods are implemented to perform a homogeneous hidden Markov model for the beta valued DNA
-             methylation data.
-The supported classes are \code{matrix} and \code{data.frame}.
-The output of \code{betaHMM} is an S4 object of class \code{betaHMMResults}.
+This is the primary user interface for the \code{betaHMM} function
+Generic S4 methods are implemented to eatimate the parameters of a
+homogeneous hidden Markov model for the beta valued DNA methylation data.
+The supported classes are \code{matrix}, \code{data.frame} and
+\code{RangedSummarizedExperiment}. The output of \code{betaHMM} method is an
+ S4 object of class \code{betaHMMResults}.
+}
+\examples{
+## Use simulated data for the betaHMM workflow example
+set.seed(12345)
+
+## read files
+methylation_data <- sample_methylation_file
+annotation_data <- sample_annotation_file
+## Run betaHMM function
+beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+                    parallel_process = FALSE, seed = 12345,
+                    treatment_group = c("Benign","Tumour"))
+
+## Run dmc_identification function
+dmc_out <- dmc_identification(beta_out)
+dmc_df <- assay(dmc_out)
+
+# Run dmr_identification function
+dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
+#
+# Plot functions
+# Get the AUC values calculated for each hidden state
+AUC_chr <- AUC(dmc_out)
+
+## plot the fitted density estimates
+plot(beta_out, chromosome = "1", what = "fitted density", AUC = AUC_chr)
+
+## Plot the DMR graph
+plot(dmc_out, start_CpG = "cg14817997", end_CpG = 8)
 }
 \author{
 Koyel Majumdar
