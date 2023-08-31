@@ -113,8 +113,8 @@ betaHMM(methylation_data, annotation_file, ...)
 \arguments{
 \item{methylation_data}{A dataframe of dimension \eqn{(C \times (N \times R)
 )+1} containing methylation values for \eqn{C} CpG sites from \eqn{R}
-            treatment groups each having \eqn{N} DNA samples and the IlmnID
-            for each CpG site. Maybe provided as a matrix or data.frame
+treatment groups each having \eqn{N} DNA samples and the IlmnID
+for each CpG site. Maybe provided as a matrix or data.frame
 or RangedSummarizedExperiment object.}
 
 \item{annotation_file}{A dataframe containing the EPIC methylation
@@ -123,7 +123,8 @@ or RangedSummarizedExperiment object.}
 
 \item{...}{Extra arguments}
 
-\item{M}{Number of methylation states to be identified in a single DNA sample.}
+\item{M}{Number of methylation states to be identified in a
+single DNA sample.}
 
 \item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
@@ -133,11 +134,11 @@ treatment group.}
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
 }
 \value{
-An S4 object of class \code{betaHMMResults}, where conditional probabilities
-of each CpG site belonging to a hidden state is stored as a SimpleList of
-assay data, and the corresponding estimated model parameters, log-likelihood
-values, and most probable hidden state sequence for each chromosome are
-stored as metadata.
+An S4 object of class \code{betaHMMResults}, where conditional
+probabilities of each CpG site belonging to a hidden state is stored as a
+SimpleList of assay data, and the corresponding estimated model parameters,
+log-likelihood values, and most probable hidden state sequence for each
+chromosome are stored as metadata.
 }
 \description{
 This is the primary user interface for the \code{betaHMM} function
@@ -145,17 +146,21 @@ Generic S4 methods are implemented to eatimate the parameters of a
 homogeneous hidden Markov model for the beta valued DNA methylation data.
 The supported classes are \code{matrix}, \code{data.frame} and
 \code{RangedSummarizedExperiment}. The output of \code{betaHMM} method is an
- S4 object of class \code{betaHMMResults}.
+S4 object of class \code{betaHMMResults}.
 }
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

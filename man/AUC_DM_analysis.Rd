@@ -8,7 +8,8 @@ estimated distributions}
 AUC_DM_analysis(M, N, R, K, tau, A, phi)
 }
 \arguments{
-\item{M}{Number of methylation states to be identified in a single DNA sample}
+\item{M}{Number of methylation states to be identified in a single DNA
+sample}
 
 \item{N}{Number of patients or DNA sample replicates collected for each
 treatment group.}
@@ -26,9 +27,10 @@ estimated hidden states in the betaHMM model.}
 }
 \value{
 A dataframe returning the hidden state and the AUC value calculated
- for the corresponding hidden states
+for the corresponding hidden states
 }
 \description{
 The function is used to calculate the dissimilarity between the
 cumulative distributions estimated in each hidden state.
 }
+\keyword{internal}

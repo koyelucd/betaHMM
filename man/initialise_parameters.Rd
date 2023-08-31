@@ -9,8 +9,8 @@ initialise_parameters(data, M, N, R, seed = NULL)
 \arguments{
 \item{data}{A dataframe of dimension \eqn{C \times (N \times R)} containing
 methylation values for \eqn{C} CpG sites from \eqn{R}
-treatment groups each having \eqn{N} replicates or each collected
-from \eqn{N} patients.}
+treatment groups each having \eqn{N} replicates or each
+collected from \eqn{N} patients.}
 
 \item{M}{Number of methylation states to be identified in a DNA sample.}
 
@@ -24,16 +24,16 @@ treatment group.}
 \value{
 A list containing:
 \itemize{
-   \item A - The transition matrix for the BHMM model.
-   \item tau - The initial distribution for the BHMM model.
-   \item phi - The shape parameters for the observation sequence data
-               in the BHMM model.
-   }
+\item A - The transition matrix for the BHMM model.
+\item tau - The initial distribution for the BHMM model.
+\item phi - The shape parameters for the observation sequence data
+in the BHMM model.}
 }
 \description{
 Initialise the BHMM model parameters.
 }
 \details{
 Computes the shape parameters using the threshold_function to
-         initialise the shape parameters of the model.
+initialise the shape parameters of the model.
 }
+\keyword{internal}

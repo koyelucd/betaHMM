@@ -8,28 +8,30 @@
 A data frame with 100 rows and 9 columns. The data contain no
 missing values.
 \itemize{
-  \item{IlmnID: The unique identifier from the Illumina CG database,
-   i.e. the probe ID.}
-  \item{Benign_Patient_1: Methylation values from benign tissue from
-  patient 1.}
-  \item{Benign_Patient_2: Methylation values from benign tissue from
-   patient 2.}
-  \item{Benign_Patient_3: Methylation values from benign tissue from
-  patient 3.}
-  \item{Benign_Patient_4: Methylation values from benign tissue from
-  patient 4.}
-  \item{Tumour_Patient_1: Methylation values from tumor tissue from
-  patient 1.}
-  \item{Tumour_Patient_2: Methylation values from tumor tissue from
-   patient 2.}
-  \item{Tumour_Patient_3: Methylation values from tumor tissue from
-  patient 3.}
-  \item{Tumour_Patient_4: Methylation values from tumor tissue from
-  patient 4.}
-   }
+\item{IlmnID: The unique identifier from the Illumina CG database,
+i.e. the probe ID.}
+\item{Benign_Patient_1: Methylation values from benign tissue from
+patient 1.}
+\item{Benign_Patient_2: Methylation values from benign tissue from
+patient 2.}
+\item{Benign_Patient_3: Methylation values from benign tissue from
+patient 3.}
+\item{Benign_Patient_4: Methylation values from benign tissue from
+patient 4.}
+\item{Tumour_Patient_1: Methylation values from tumor tissue from
+patient 1.}
+\item{Tumour_Patient_2: Methylation values from tumor tissue from
+patient 2.}
+\item{Tumour_Patient_3: Methylation values from tumor tissue from
+patient 3.}
+\item{Tumour_Patient_4: Methylation values from tumor tissue from
+patient 4.}}
 }
 \usage{
 data(sample_methylation_file)
+}
+\value{
+The data frame containing simulated methylation values.
 }
 \description{
 A dataset containing simulated beta methylation values from
@@ -39,10 +41,10 @@ patients.
 \details{
 The array data were then normalized and and probes located outside
 of CpG sites and on the sex chromosome were filtered out. The CpG sites with
- missing values were removed from the resulting dataset. A subset of the
-  complete dataset has been uploaded in the package for testing purposes.
-   The complete dataset is available on
-   \href{https://github.com/koyelucd/betaHMM}{GitHub}.
+missing values were removed from the resulting dataset. A subset of the
+complete dataset has been uploaded in the package for testing purposes.
+The complete dataset is available on
+\href{https://github.com/koyelucd/betaHMM}{GitHub}.
 }
 \seealso{
 \code{\link{sample_annotation_file}}

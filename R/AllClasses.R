@@ -3,11 +3,8 @@
 #' @import SummarizedExperiment
 
 setClass("betaHMMResults",
-         contains = "RangedSummarizedExperiment",
-         representation = representation(
-           annotatedData="DataFrame"
-
-         ))
+            contains = "RangedSummarizedExperiment",
+            representation = representation(annotatedData="DataFrame"))
 
 ## TODO:
 ## setValidity( ... )
@@ -38,24 +35,24 @@ setClass("betaHMMResults",
 #' @importClassesFrom S4Vectors DataFrame
 #' @importFrom S4Vectors DataFrame
 #' @export
-betaHMMResults <- function(SummarizedExperiment,
-                         annotatedData) {
-  se <- SummarizedExperiment
-  if (!is(se, "RangedSummarizedExperiment")) {
+#' @example inst/examples/betaHMM_package.R
+betaHMMResults <- function(SummarizedExperiment,annotatedData) {
+    se <- SummarizedExperiment
+    if (!is(se, "RangedSummarizedExperiment")) {
     stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-  }
-  if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
-                                                               nrow=0, ncol=0))
-  object <- new("betaHMMResults", se, annotatedData=annotatedData)
-  return(object)
-}
+    }
+    if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
+                                                                nrow=0,ncol=0))
+    object <- new("betaHMMResults", se, annotatedData=annotatedData)
+    return(object)
+    }
 
 #' @rdname dmrResults
 #' @export
 #' @import SummarizedExperiment
 
 setClass("dmrResults",
-         contains = "RangedSummarizedExperiment")
+            contains = "RangedSummarizedExperiment")
 
 ## TODO:
 ## setValidity( ... )
@@ -85,14 +82,15 @@ setClass("dmrResults",
 #' @importClassesFrom S4Vectors DataFrame
 #' @importFrom S4Vectors DataFrame
 #' @export
+#' @example inst/examples/betaHMM_package.R
 dmrResults <- function(SummarizedExperiment) {
-  se <- SummarizedExperiment
-  if (!is(se, "RangedSummarizedExperiment")) {
+    se <- SummarizedExperiment
+    if (!is(se, "RangedSummarizedExperiment")) {
     stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-  }
+    }
 
-  object <- new("dmrResults", se)
-  return(object)
+    object <- new("dmrResults", se)
+    return(object)
 }
 
 
@@ -103,7 +101,7 @@ dmrResults <- function(SummarizedExperiment) {
 #' @import SummarizedExperiment
 
 setClass("dmcResults",
-         contains = "RangedSummarizedExperiment")
+            contains = "RangedSummarizedExperiment")
 
 ## TODO:
 ## setValidity( ... )
@@ -133,14 +131,15 @@ setClass("dmcResults",
 #' @importClassesFrom S4Vectors DataFrame
 #' @importFrom S4Vectors DataFrame
 #' @export
+#' @example inst/examples/betaHMM_package.R
 dmcResults <- function(SummarizedExperiment) {
-  se <- SummarizedExperiment
-  if (!is(se, "RangedSummarizedExperiment")) {
+    se <- SummarizedExperiment
+    if (!is(se, "RangedSummarizedExperiment")) {
     stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-  }
+    }
 
-  object <- new("dmcResults", se)
-  return(object)
+    object <- new("dmcResults", se)
+    return(object)
 }
 
 
@@ -151,11 +150,11 @@ dmcResults <- function(SummarizedExperiment) {
 #' @import SummarizedExperiment
 
 setClass("threshold_Results",
-         contains = "RangedSummarizedExperiment",
-         representation = representation(
-           annotatedData="DataFrame"
+            contains = "RangedSummarizedExperiment",
+            representation = representation(
+            annotatedData="DataFrame"
 
-         ))
+            ))
 
 ## TODO:
 ## setValidity( ... )
@@ -188,14 +187,34 @@ setClass("threshold_Results",
 #' @importClassesFrom S4Vectors DataFrame
 #' @importFrom S4Vectors DataFrame
 #' @export
+#' @examples
+#' ## Use simulated data for the betaHMM workflow example
+#' set.seed(12345)
+#' library(betaHMM)
+#'
+#' ## read files
+#' data(sample_methylation_file)
+#' head(sample_methylation_file)
+#' data(sample_annotation_file)
+#' head(sample_annotation_file)
+#' ##merge data
+#' df=merge(sample_annotation_file[,c('IlmnID','CHR','MAPINFO')],
+#' sample_methylation_file,by='IlmnID')
+#'
+#' ## sort data
+#' df=df[order(df$CHR,df$MAPINFO),]
+#' thr_out=threshold_identification(df[,c(1,4:7)],package_workflow=TRUE,M=3,4,
+#' parameter_estimation_only=TRUE,seed=12345)
+#'
+
 threshold_Results <- function(SummarizedExperiment,
-                           annotatedData) {
-  se <- SummarizedExperiment
-  if (!is(se, "RangedSummarizedExperiment")) {
+                            annotatedData) {
+    se <- SummarizedExperiment
+    if (!is(se, "RangedSummarizedExperiment")) {
     stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-  }
-  if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
-                                                               nrow=0, ncol=0))
-  object <- new("threshold_Results", se, annotatedData=annotatedData)
-  return(object)
+    }
+    if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
+                                                                nrow=0,ncol=0))
+    object <- new("threshold_Results", se, annotatedData=annotatedData)
+    return(object)
 }

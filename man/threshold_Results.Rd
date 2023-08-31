@@ -33,3 +33,23 @@ objects from the
 function. It is used by
 to wrap up the results table.
 }
+\examples{
+## Use simulated data for the betaHMM workflow example
+set.seed(12345)
+library(betaHMM)
+
+## read files
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
+##merge data
+df=merge(sample_annotation_file[,c('IlmnID','CHR','MAPINFO')],
+sample_methylation_file,by='IlmnID')
+
+## sort data
+df=df[order(df$CHR,df$MAPINFO),]
+thr_out=threshold_identification(df[,c(1,4:7)],package_workflow=TRUE,M=3,4,
+parameter_estimation_only=TRUE,seed=12345)
+
+}

@@ -37,17 +37,21 @@ This is the primary user interface for the
 Generic S4 methods are implemented to identify the DMRs from the DMCs
 identified in each chromosome. The supported classes are \code{data.frame}
 and \code{\link[betaHMM:dmcResults]{dmcResults}} object. The output is an
- S4 object of class \code{\link[betaHMM:dmrResults]{dmrResults}}.
+S4 object of class \code{\link[betaHMM:dmrResults]{dmrResults}}.
 }
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

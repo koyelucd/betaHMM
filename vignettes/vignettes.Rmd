@@ -1,6 +1,8 @@
 ---
-title: "betaHMM"
-author: "Koyel Majumdar"
+title: "*betaHMM* package: Quick-start guide"
+author: "Koyel Majumdar, Isobel Claire Gormley, Thomas Brendan Murphy, 
+Romina Silva, Antoinette Sabrina Perry, Ronald William Watson, 
+Florence Jaffrézic, Andrea Rau"
 output: rmarkdown::html_vignette
 always_allow_html: true
 vignette: >
@@ -10,12 +12,15 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
+knitr::include_graphics("betaHMM_hex.png")
+options(rmarkdown.html_vignette.check_title = FALSE)
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(eval = TRUE)
+
 #knitr::opts_chunk$set(dev = 'png')
 #knitr::opts_chunk$set(dpi=100)
 ```
@@ -63,7 +68,7 @@ R software environment installed on their machine. The **betaHMM** package has
 the following dependencies which, if not already installed on the machine will
 automatically be installed along with the package:
 **stats, ggplot2,  scales, methods, pROC, foreach, doParallel, cowplot, dplyr,
- tidyr, stringr**.
+tidyr, stringr**.
 
 
 Assuming that the user has the **betaHMM** package installed,
@@ -121,11 +126,11 @@ following steps:
     \item The \textbf{DMC identification} function uses the betaHMM output and
     selects the differentially methylated hidden states and the DMCs.
     The area-under-curve (AUC) method is used to select the DMCs.
-    \item The \textbf{DMR identification} function uses the DMC function output.
-    The function also has a user-defined parameter of the minimum number of
-    adjacent CpGs to be in a DMR. The output of this function is a dataframe
-    containing the number of DMCs in a DMR, the CpG sites and the starting and
-    ending location information of that DMR.
+    \item The \textbf{DMR identification} function uses the DMC 
+    function output.The function also has a user-defined parameter of the 
+    minimum number of adjacent CpGs to be in a DMR. The output of this 
+    function is a dataframe containing the number of DMCs in a DMR, 
+    the CpG sites and the starting and ending location information of that DMR.
 \end{itemize}
 
 ## Model parameter estimation
@@ -137,8 +142,8 @@ most probable sequence of hidden states.
 ```{r betaHMM,include=TRUE, echo=TRUE}
 M <- 3 ## No. of methylation states in a DNA sample type
 N <- 4 ## No. of patients
-R <- 2 ## No. of treament conditions
-my.seed <- 190 ## set seed for reproducibility
+R <- 2 ## No. of treatment conditions
+my.seed <- 321 ## set seed for reproducibility
 
 betaHMM_out <- betaHMM::betaHMM(pca_methylation_data,
                                 annotation_data,
@@ -146,7 +151,7 @@ betaHMM_out <- betaHMM::betaHMM(pca_methylation_data,
                                 N = 4,
                                 R = 2,
                                 parallel_process = FALSE,
-                                seed = 321,
+                                seed = my.seed,
                                 treatment_group = c("Benign","Tumour"))
 ```
 
@@ -164,10 +169,10 @@ The parameters estimated can be displayed using the following S4 methods:
 A(betaHMM_out)
 
 ## Shape parameters estimated for a certain chromosome
-phi(betaHMM_out)[["chr 7"]]
+phi(betaHMM_out)
 
 ## Hidden states assigned to all CpG sites for a certain chromosome
-hidden_states(betaHMM_out)[["chr 7"]]
+head(hidden_states(betaHMM_out)[["chr 7"]])
 ```
 
 
@@ -209,16 +214,17 @@ summary(dmc_out)
 
 The fitted density estimates, kernel density estimates and the uncertainty in
 the hidden state assignment can be viewed using the plot function for the
-betaHMM output. As the parameters are estimated for each chromosome individually,
-the plot can be obtained for each chromosome. The chromosome number needs to be
-selected using the `chromosome` parameter in the function.
+betaHMM output. As the parameters are estimated for each chromosome 
+individually, the plot can be obtained for each chromosome. 
+The chromosome number needs to be selected using the `chromosome` parameter
+in the function.
 
 The AUC metrics calculated for the hidden states can also be displayed using
 the parameter `AUC`. The AUC values estimated using the `dmc_identification`
 function is passed as an input parameter to the function and the AUC metrics
 corresponding to the selected chromosome is displayed in the plot panels.
 
-```{r betaHMMplot,include=TRUE, echo=TRUE}
+```{r betaHMMplot,include=TRUE,echo=TRUE,fig.width=6.5,fig.height=5,dev='png'}
 AUC_chr <- AUC(dmc_out)
 plot(betaHMM_out, chromosome = "7", what = "fitted density", AUC = AUC_chr)
 ```
@@ -229,9 +235,9 @@ provide the threshold of uncertainty, intended for DMC identification, as an
 input parameter to the plotting function. This facilitates the inclusion of the
 specified threshold alongside the visualization of uncertainties.
 
-```{r betaHMMplot2,include=TRUE, echo=TRUE}
+```{r betaHMMplot2,include=TRUE,echo=TRUE,fig.width=6,fig.height=5,dev='png'}
 plot(betaHMM_out, chromosome = "7", what = "uncertainty", 
-     uncertainty_threshold = 0.2)
+        uncertainty_threshold = 0.2)
 ```
 
 ## DMR identification from DMCs identified
@@ -239,12 +245,12 @@ plot(betaHMM_out, chromosome = "7", what = "uncertainty",
 The spatially correlated CpG sites result in a region of CpG sites having
 similar methylation states thus resulting in forming of biologically
 significant regions known as the differentially methylated region (DMR). A
-user-defined parameter `DMC_count` is used define the number of adjacent DMCs in
-a DMR. By default the value is set to 2. If no value is provided, the function
-identifies regions with adjacent 2 or more DMCs in a chromosome as a DMR. The
-DMR location information along with the DMCs in that DMR are provided as
-an S4 output of class `dmrResults`. The output can be accessed using the
-S4 assay method.
+user-defined parameter `DMC_count` is used define the number of adjacent DMCs 
+in a DMR. By default the value is set to 2. If no value is provided,
+the function identifies regions with adjacent 2 or more DMCs in a chromosome 
+as a DMR. The DMR location information along with the DMCs in that DMR are 
+provided as an S4 output of class `dmrResults`. The output can be accessed
+using the S4 assay method.
 
 ```{r dmr,include=TRUE, echo=TRUE}
 dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
@@ -273,8 +279,8 @@ hidden state identified as the most differentially methylated state but as it
 was below the threshold value used by the user, it was not selected as
 a DMC.
 
-```{r dmrplot,include=TRUE, echo=TRUE}
-plot(dmc_out, start_CpG = "cg17750844", end_CpG = 15)
+```{r dmrplot,include=TRUE,echo=TRUE,fig.width=7,fig.height = 5, dev = 'png'}
+p<-plot(dmc_out, start_CpG = "cg17750844", end_CpG = 15)
 ```
 
 ## Threshold identification in DNA samples from a treatment condition
@@ -292,17 +298,21 @@ a single biological condition.
 
 ```{r threshold,include=TRUE, echo=TRUE}
 threshold_out <- threshold_identification(pca_methylation_data[,1:5],
-                                          package_workflow = FALSE,
-                                          annotation_file = annotation_data,
-                                          M = 3,
-                                          N = 4,
-                                          parameter_estimation_only = FALSE,
-                                          seed = my.seed)
+                                            package_workflow = FALSE,
+                                            annotation_file = annotation_data,
+                                            M = 3,
+                                            N = 4,
+                                            parameter_estimation_only = FALSE,
+                                            seed = my.seed)
 threshold(threshold_out)
 ```
 
 ## Plotting the results from threshold identification function
 
-```{r thresholdplot,include=TRUE, echo=TRUE}
+```{r thresholdplot,include=TRUE, echo=TRUE,fig.width = 5, fig.height = 4,dev = 'png'}
 plot(threshold_out, what = "fitted density")
+```
+
+```{r}
+sessionInfo()
 ```

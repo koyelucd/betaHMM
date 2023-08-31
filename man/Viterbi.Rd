@@ -9,10 +9,11 @@ Viterbi(data, M, N, R, tau, A, phi)
 \arguments{
 \item{data}{A dataframe of dimension \eqn{C \times (N \times R)} containing
 methylation values for \eqn{C} CpG sites from \eqn{R}
-treatment groups each having \eqn{N} replicates or each collected
-from \eqn{N} patients.}
+treatment groups each having \eqn{N} replicates or each
+collected from \eqn{N} patients.}
 
-\item{M}{Number of methylation states to be identified in a single DNA sample.}
+\item{M}{Number of methylation states to be identified
+in a single DNA sample.}
 
 \item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
@@ -28,10 +29,11 @@ in the betaHMM model.}
 }
 \value{
 A vector containing the most probable sequence of the hidden states
-        of the betaHMM model.
+of the betaHMM model.
 }
 \description{
 The Viterbi algorithm is used to estimate the most probable
-             sequence of the hidden states utilizing the betaHMM model
-             parameters estimated by the Baum-Welch algorithm.
+sequence of the hidden states utilizing the betaHMM model
+parameters estimated by the Baum-Welch algorithm.
 }
+\keyword{internal}

@@ -1,8 +1,8 @@
 #' @rdname betaHMM
 #' @export
-setGeneric("betaHMM", function(methylation_data,annotation_file,...)
-  standardGeneric("betaHMM"),
-           signature=c("methylation_data","annotation_file"))
+setGeneric("betaHMM", function(methylation_data, annotation_file, ...)
+standardGeneric("betaHMM"),
+signature = c("methylation_data", "annotation_file"))
 
 
 #' @rdname packageHelpers
@@ -33,8 +33,8 @@ setGeneric("phi", function(object) standardGeneric("phi"))
 
 #' @rdname packageHelpers
 #' @export
-setGeneric("treatment_group",
-           function(object) standardGeneric("treatment_group"))
+setGeneric("treatment_group", function(object)
+    standardGeneric("treatment_group"))
 
 
 
@@ -52,8 +52,8 @@ setGeneric("hidden_states", function(object) standardGeneric("hidden_states"))
 
 #' @rdname packageHelpers
 #' @export
-setGeneric("chromosome_number",
-           function(object) standardGeneric("chromosome_number"))
+setGeneric("chromosome_number", function(object)
+    standardGeneric("chromosome_number"))
 
 
 #' @rdname plot
@@ -69,15 +69,14 @@ setGeneric("summary", function(object, ...) standardGeneric("summary"))
 #' @rdname dmr_identification
 #' @export
 setGeneric("dmr_identification",
-           function(dmc_identification_object,...)
-             standardGeneric("dmr_identification"),
-           signature=c("dmc_identification_object"))
+            function(dmc_identification_object, ...)
+            standardGeneric("dmr_identification"),
+            signature = c("dmc_identification_object"))
 
 #' @rdname dmc_identification
 #' @export
-setGeneric("dmc_identification",
-           function(betaHMM_object,...) standardGeneric("dmc_identification"),
-           signature=c("betaHMM_object"))
+setGeneric("dmc_identification", function(betaHMM_object, ...)
+    standardGeneric("dmc_identification"), signature = c("betaHMM_object"))
 
 #' @rdname packageHelpers
 #' @export
@@ -90,15 +89,14 @@ setGeneric("uncertainty", function(object) standardGeneric("uncertainty"))
 
 #' @rdname threshold_identification
 #' @export
-setGeneric("threshold_identification", function(object1,...)
-  standardGeneric("threshold_identification"),
-           signature=c("object1"))
+setGeneric("threshold_identification", function(object1, ...)
+    standardGeneric("threshold_identification"), signature = c("object1"))
 
 
 #' @rdname packageHelpers
 #' @export
 setGeneric("model_parameters", function(object)
-  standardGeneric("model_parameters"))
+    standardGeneric("model_parameters"))
 
 
 #' @rdname packageHelpers

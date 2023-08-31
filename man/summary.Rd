@@ -17,14 +17,14 @@ summary(object, ...)
 \S4method{summary}{dmrResults}(object, ...)
 }
 \arguments{
-\item{object}{An object of class \code{"betaHMMResults"} or
-\code{"dmcResults"} or \code{"dmrResults"}.}
+\item{object}{An object of class \code{'betaHMMResults'} or
+\code{'dmcResults'} or \code{'dmrResults'}.}
 
 \item{...}{Additional arguments}
 }
 \value{
-Summary of the \code{"betaHMMResults"} or
-\code{"dmcResults"} or \code{"dmrResults"} object.
+Summary of the \code{'betaHMMResults'} or
+\code{'dmcResults'} or \code{'dmrResults'} object.
 }
 \description{
 A function to summarize the \code{betaHMMResults}, \code{dmcResults} or
@@ -33,12 +33,16 @@ A function to summarize the \code{betaHMMResults}, \code{dmcResults} or
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

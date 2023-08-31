@@ -17,15 +17,16 @@ for the observed data).}
 \value{
 A list containing:
 \itemize{
-   \item log_beta - A \eqn{C*K} matrix (where \eqn{C} is the number of CpG
-   sites and \eqn{K} is the number of hidden states) containing the
-   logarithmized backward probabilities.
-   \item scaled_logL - The log-likelihood calculated using the backward
-                       probabilities.
-   }
+\item log_beta - A \eqn{C*K} matrix (where \eqn{C} is the number of CpG
+sites and \eqn{K} is the number of hidden states) containing the
+logarithmized backward probabilities.
+\item scaled_logL - The log-likelihood calculated using the backward
+probabilities.
+}
 }
 \description{
 Computes the backward probabilities for \eqn{K} hidden states
-         using the initial distribution, transition matrix and distribution
-         parameters.
+using the initial distribution, transition matrix and distribution
+parameters.
 }
+\keyword{internal}

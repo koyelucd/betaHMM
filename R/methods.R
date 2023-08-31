@@ -5,24 +5,23 @@
 #' homogeneous hidden Markov model for the beta valued DNA methylation data.
 #' The supported classes are \code{matrix}, \code{data.frame} and
 #' \code{RangedSummarizedExperiment}. The output of \code{betaHMM} method is an
-#'  S4 object of class \code{betaHMMResults}.
+#' S4 object of class \code{betaHMMResults}.
 #'
 #' @inheritParams betaHMMrun
 #' @param methylation_data A dataframe of dimension \eqn{(C \times (N \times R)
 #' )+1} containing methylation values for \eqn{C} CpG sites from \eqn{R}
-#'             treatment groups each having \eqn{N} DNA samples and the IlmnID
-#'             for each CpG site. Maybe provided as a matrix or data.frame
+#' treatment groups each having \eqn{N} DNA samples and the IlmnID
+#' for each CpG site. Maybe provided as a matrix or data.frame
 #' or RangedSummarizedExperiment object.
 #' @param annotation_file A dataframe containing the EPIC methylation
 #' annotation file. Maybe provided as a matrix or data.frame
 #' or RangedSummarizedExperiment object.
 #'
-#' @return
-#' An S4 object of class \code{betaHMMResults}, where conditional probabilities
-#'of each CpG site belonging to a hidden state is stored as a SimpleList of
-#'assay data, and the corresponding estimated model parameters, log-likelihood
-#'values, and most probable hidden state sequence for each chromosome are
-#'stored as metadata.
+#' @return An S4 object of class \code{betaHMMResults}, where conditional
+#' probabilities of each CpG site belonging to a hidden state is stored as a
+#' SimpleList of assay data, and the corresponding estimated model parameters,
+#' log-likelihood values, and most probable hidden state sequence for each
+#' chromosome are stored as metadata.
 #'
 #' @aliases
 #' betaHMM
@@ -46,166 +45,139 @@
 #' @example inst/examples/betaHMM_package.R
 #'
 
-setMethod("betaHMM",
-          signature = signature(methylation_data = "matrix",
-                              annotation_file = "matrix"),
-          definition = function(methylation_data, annotation_file,
-                              M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- as.data.frame(methylation_data)
-            data2 <- as.data.frame(annotation_file)
-            #arg.user <- list(...)
-              run <- betaHMMrun(methylation_data = data1,
-                                annotation_file = data2,
-                                M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM", signature = signature(methylation_data = "matrix",
+annotation_file = "matrix"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+...) {
+data1 <- as.data.frame(methylation_data)
+data2 <- as.data.frame(annotation_file)
+# arg.user <- list(...)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, seed = seed, ...)
+return(run)
+})
 
 
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
 setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
-                                           annotation_file = "data.frame"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- methylation_data
-            data2 <- annotation_file
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+annotation_file = "data.frame"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+...) {
+data1 <- methylation_data
+data2 <- annotation_file
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, seed = seed, ...)
+return(run)
+})
 
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "RangedSummarizedExperiment",
-                                         annotation_file =
-                                           "RangedSummarizedExperiment"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- assay(methylation_data)
-            data2 <- assay(annotation_file)
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM",
+signature=signature(methylation_data="RangedSummarizedExperiment",
+annotation_file = "RangedSummarizedExperiment"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, seed = NULL, ...) {
+data1 <- assay(methylation_data)
+data2 <- assay(annotation_file)
+run <- betaHMMrun(methylation_data = data1,
+annotation_file = data2, M = M, N = N,
+R = R, seed = seed, ...)
+return(run)
+})
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "RangedSummarizedExperiment",
-                                           annotation_file =
-                                           "matrix"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- assay(methylation_data)
-            data2 <- as.data.frame(annotation_file)
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
-################################################################################
+setMethod("betaHMM",
+signature=signature(methylation_data="RangedSummarizedExperiment",
+annotation_file = "matrix"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+...) {
+data1 <- assay(methylation_data)
+data2 <- as.data.frame(annotation_file)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, seed = seed, ...)
+return(run)
+})
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "RangedSummarizedExperiment",
-                                         annotation_file =
-                                           "data.frame"),
-          definition = function(methylation_data,annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- assay(methylation_data)
-            data2 <- annotation_file
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM",
+signature=signature(methylation_data="RangedSummarizedExperiment",
+annotation_file = "data.frame"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+...) {
+data1 <- assay(methylation_data)
+data2 <- annotation_file
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, seed = seed, ...)
+return(run)
+})
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "matrix",
-                                         annotation_file =
-                                           "RangedSummarizedExperiment"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- as.data.frame(methylation_data)
-            data2 <- assay(annotation_file)
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM", signature = signature(methylation_data = "matrix",
+annotation_file = "RangedSummarizedExperiment"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, seed = NULL, ...) {
+data1 <- as.data.frame(methylation_data)
+data2 <- assay(annotation_file)
+run <- betaHMMrun(methylation_data = data1,
+annotation_file = data2, M = M, N = N,
+R = R, seed = seed, ...)
+return(run)
+})
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "data.frame",
-                                         annotation_file =
-                                           "RangedSummarizedExperiment"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3,N = 4,R = 2, seed = NULL, ...)
-          {
-            data1 <- methylation_data
-            data2 <- assay(annotation_file)
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
+annotation_file = "RangedSummarizedExperiment"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, seed = NULL, ...) {
+data1 <- methylation_data
+data2 <- assay(annotation_file)
+run <- betaHMMrun(methylation_data = data1,
+annotation_file = data2, M = M, N = N,
+R = R, seed = seed, ...)
+return(run)
+})
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "matrix",
-                                         annotation_file =
-                                           "data.frame"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- as.data.frame(methylation_data)
-            data2 <- annotation_file
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM", signature = signature(methylation_data = "matrix",
+annotation_file = "data.frame"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+...) {
+data1 <- as.data.frame(methylation_data)
+data2 <- annotation_file
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, seed = seed, ...)
+return(run)
+})
 
-################################################################################
+##############################################################################
 #' @rdname betaHMM
 #' @export
-setMethod("betaHMM", signature = signature(methylation_data =
-                                           "data.frame",
-                                         annotation_file =
-                                           "matrix"),
-          definition = function(methylation_data, annotation_file,
-                                M = 3, N = 4, R = 2, seed = NULL, ...)
-          {
-            data1 <- methylation_data
-            data2 <- as.data.frame(annotation_file)
-            run <- betaHMMrun(methylation_data = data1,
-                              annotation_file = data2,
-                              M = M, N = N, R = R, seed = seed, ...)
-            return(run)
-          })
+setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
+annotation_file = "matrix"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+...) {
+data1 <- methylation_data
+data2 <- as.data.frame(annotation_file)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, seed = seed, ...)
+return(run)
+})
 
-################################################################################
+##############################################################################
 #' Accessors for the betaHMM package.
 #'
 #' The accessor methods for accessing the betaHMMResults/ dmcResults/
@@ -270,20 +242,22 @@ setMethod("betaHMM", signature = signature(methylation_data =
 #' threshold,NULL-method
 #' @param object a \code{betaHMMResults} object or \code{dmcResults} object
 #' or \code{threshold_Results} object.
+#' @return Output varies depending on the method.
 #' @export
+#' @example inst/examples/betaHMM_package.R
 setMethod("annotatedData", "betaHMMResults",
-          function(object) object@annotatedData)
+            function(object) object@annotatedData)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("annotatedData", "threshold_Results",
-          function(object) object@annotatedData)
+            function(object) object@annotatedData)
 
 ### K
 #' @rdname packageHelpers
 #' @export
 setMethod("K", "RangedSummarizedExperiment",
-          function(object) metadata(object)$K)
+            function(object) metadata(object)$K)
 
 #' @rdname packageHelpers
 #' @export
@@ -304,7 +278,7 @@ setMethod("K", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("N", "RangedSummarizedExperiment",
-          function(object) metadata(object)$N)
+            function(object) metadata(object)$N)
 
 #' @rdname packageHelpers
 #' @export
@@ -324,7 +298,7 @@ setMethod("N", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("R", "RangedSummarizedExperiment",
-          function(object) metadata(object)$R)
+            function(object) metadata(object)$R)
 
 #' @rdname packageHelpers
 #' @export
@@ -345,7 +319,7 @@ setMethod("R", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("A", "RangedSummarizedExperiment",
-          function(object) metadata(object)$A)
+            function(object) metadata(object)$A)
 
 #' @rdname packageHelpers
 #' @export
@@ -360,7 +334,7 @@ setMethod("A", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("tau", "RangedSummarizedExperiment",
-          function(object) metadata(object)$tau)
+            function(object) metadata(object)$tau)
 
 #' @rdname packageHelpers
 #' @export
@@ -375,17 +349,17 @@ setMethod("tau", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("treatment_group", "RangedSummarizedExperiment",
-          function(object) metadata(object)$treatment_group)
+    function(object) metadata(object)$treatment_group)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("treatment_group", "betaHMMResults",
-          function(object) metadata(object)$treatment_group)
+            function(object) metadata(object)$treatment_group)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("treatment_group", "dmcResults",
-          function(object) metadata(object)$treatment_group)
+            function(object) metadata(object)$treatment_group)
 
 
 #' @rdname packageHelpers
@@ -397,7 +371,7 @@ setMethod("treatment_group", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("llk", "RangedSummarizedExperiment",
-          function(object) metadata(object)$llk)
+            function(object) metadata(object)$llk)
 
 #' @rdname packageHelpers
 #' @export
@@ -411,7 +385,7 @@ setMethod("llk", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("phi", "RangedSummarizedExperiment",
-          function(object) metadata(object)$phi)
+            function(object) metadata(object)$phi)
 
 #' @rdname packageHelpers
 #' @export
@@ -430,17 +404,17 @@ setMethod("phi", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("hidden_states", "RangedSummarizedExperiment",
-          function(object) metadata(object)$hidden_states)
+    function(object) metadata(object)$hidden_states)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("hidden_states", "betaHMMResults",
-          function(object) metadata(object)$hidden_states)
+            function(object) metadata(object)$hidden_states)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("hidden_states", "threshold_Results",
-          function(object) metadata(object)$hidden_states)
+            function(object) metadata(object)$hidden_states)
 
 #' @rdname packageHelpers
 #' @export
@@ -451,17 +425,17 @@ setMethod("hidden_states", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("chromosome_number", "RangedSummarizedExperiment",
-          function(object) metadata(object)$chromosome_number)
+    function(object) metadata(object)$chromosome_number)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("chromosome_number", "betaHMMResults",
-          function(object) metadata(object)$chromosome_number)
+            function(object) metadata(object)$chromosome_number)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("chromosome_number", "dmrResults",
-          function(object) metadata(object)$chromosome_number)
+            function(object) metadata(object)$chromosome_number)
 
 #' @rdname packageHelpers
 #' @export
@@ -470,7 +444,7 @@ setMethod("chromosome_number", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("AUC", "RangedSummarizedExperiment",
-          function(object) metadata(object)$AUC)
+            function(object) metadata(object)$AUC)
 
 #' @rdname packageHelpers
 #' @export
@@ -484,12 +458,12 @@ setMethod("AUC", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("uncertainty", "RangedSummarizedExperiment",
-          function(object) metadata(object)$uncertainty)
+    function(object) metadata(object)$uncertainty)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("uncertainty", "dmcResults",
-          function(object) metadata(object)$uncertainty)
+            function(object) metadata(object)$uncertainty)
 
 #' @rdname packageHelpers
 #' @export
@@ -499,12 +473,12 @@ setMethod("uncertainty", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("model_parameters", "RangedSummarizedExperiment",
-          function(object) metadata(object)$model_parameters)
+    function(object) metadata(object)$model_parameters)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("model_parameters", "threshold_Results",
-          function(object) metadata(object)$model_parameters)
+    function(object) metadata(object)$model_parameters)
 
 #' @rdname packageHelpers
 #' @export
@@ -514,12 +488,12 @@ setMethod("model_parameters", "NULL", function(object) NA)
 #' @rdname packageHelpers
 #' @export
 setMethod("threshold", "RangedSummarizedExperiment",
-          function(object) metadata(object)$threshold)
+    function(object) metadata(object)$threshold)
 
 #' @rdname packageHelpers
 #' @export
 setMethod("threshold", "threshold_Results",
-          function(object) metadata(object)$threshold)
+            function(object) metadata(object)$threshold)
 
 #' @rdname packageHelpers
 #' @export
@@ -533,7 +507,7 @@ setMethod("threshold", "NULL", function(object) NA)
 #' Generic S4 methods are implemented to identify the DMRs from the DMCs
 #' identified in each chromosome. The supported classes are \code{data.frame}
 #' and \code{\link[betaHMM:dmcResults]{dmcResults}} object. The output is an
-#'  S4 object of class \code{\link[betaHMM:dmrResults]{dmrResults}}.
+#' S4 object of class \code{\link[betaHMM:dmrResults]{dmrResults}}.
 #' @rdname dmr_identification
 #' @aliases
 #' dmr_identification
@@ -552,52 +526,48 @@ setMethod("threshold", "NULL", function(object) NA)
 #' @importFrom stats complete.cases
 #' @example inst/examples/betaHMM_package.R
 #'
-setMethod(f="dmr_identification", signature(dmc_identification_object =
-                                              "dmcResults"),
-          definition = function(dmc_identification_object, DMC_count = 2, ...) {
-
-
-            #object <- x
+setMethod(f = "dmr_identification",
+            signature(dmc_identification_object = "dmcResults"),
+            definition = function(dmc_identification_object, DMC_count = 2,
+                                ...) {
             object_df <- assay(dmc_identification_object)
-            dmr_df <- dmr_identification_run(dmc_identification_object =
-                                             object_df,
-                                           DMC_count = DMC_count, ...)
-            return(dmr_df)
-          })
+            dmr_df <-dmr_identification_run(dmc_identification_object =
+                                            object_df,
+                                            DMC_count = DMC_count, ...)
+        return(dmr_df)
+    })
 
 
 
-################################################################################
+##############################################################################
 #' @rdname dmr_identification
 #' @export
-setMethod("dmr_identification",
-          signature = signature(dmc_identification_object = "matrix"),
-          definition = function(dmc_identification_object, DMC_count = 2, ...)
-          {
+setMethod(f="dmr_identification",
+            signature = signature(dmc_identification_object = "matrix"),
+            definition = function(dmc_identification_object, DMC_count = 2,
+                                ...) {
             dmc_identification_object <-
-              as.data.frame(dmc_identification_object)
-            #arg.user <- list(...)
+                as.data.frame(dmc_identification_object)
             dmr_df <- dmr_identification_run(dmc_identification_object =
-                                             dmc_identification_object,
-                                             DMC_count = DMC_count, ...)
-            return(dmr_df)
-          })
+                                                dmc_identification_object,
+                                                DMC_count = DMC_count, ...)
+        return(dmr_df)
+    })
 
 
 
-################################################################################
+##############################################################################
 #' @rdname dmr_identification
 #' @export
-setMethod("dmr_identification",
-          signature = signature(dmc_identification_object = "data.frame"),
-          definition = function(dmc_identification_object, DMC_count = 2, ...)
-          {
-            #data <- object
+setMethod(f="dmr_identification",
+            signature = signature(dmc_identification_object = "data.frame"),
+            definition = function(dmc_identification_object, DMC_count = 2,
+                                ...) {
             dmr_df <- dmr_identification_run(dmc_identification_object =
-                                             dmc_identification_object,
-                                             DMC_count = DMC_count, ...)
-            return(dmr_df)
-          })
+                                                dmc_identification_object,
+                                                DMC_count = DMC_count, ...)
+        return(dmr_df)
+    })
 
 ### DMC methods
 #' @title DMC identification from estimated betaHMM model parameters
@@ -621,19 +591,19 @@ setMethod("dmr_identification",
 #' @importFrom stats complete.cases
 #' @example inst/examples/betaHMM_package.R
 #'
-setMethod(f="dmc_identification",
-          signature(betaHMM_object = "betaHMMResults"),
-          definition = function(betaHMM_object, AUC_threshold = 0.8,
-                                uncertainty_threshold = 0.2, ...) {
+setMethod(f = "dmc_identification",
+            signature(betaHMM_object = "betaHMMResults"),
+    definition = function(betaHMM_object, AUC_threshold = 0.8,
+        uncertainty_threshold = 0.2, ...) {
 
 
-            #object <- x
-            dmc_df <- dmc_identification_run(betaHMM_object = betaHMM_object,
-                                             AUC_threshold = AUC_threshold,
-                                             uncertainty_threshold =
-                                               uncertainty_threshold, ...)
-            return(dmc_df)
-          })
+        # object <- x
+        dmc_df <- dmc_identification_run(betaHMM_object = betaHMM_object,
+            AUC_threshold = AUC_threshold,
+            uncertainty_threshold = uncertainty_threshold,
+            ...)
+        return(dmc_df)
+    })
 
 
 
@@ -645,8 +615,7 @@ setMethod(f="dmc_identification",
 #' class \code{threshold_Results}.
 #'
 #' @inheritParams threshold_identification_run
-#' @param object1 Methylation data and IlmnID. Maybe provided as
-#'  a matrix
+#' @param object1 Methylation data and IlmnID. Maybe provided as a matrix
 #' or dataframe.
 #' @return
 #' An S4 object of class \code{threshold_Results}.
@@ -660,55 +629,62 @@ setMethod(f="dmc_identification",
 #' @rdname threshold_identification
 #' @import methods
 #' @importFrom stats p.adjust
+#' @examples
+#' ## Use simulated data for the betaHMM workflow example
+#' set.seed(12345)
+#' library(betaHMM)
+#'
+#' ## read files
+#' data(sample_methylation_file)
+#' head(sample_methylation_file)
+#' data(sample_annotation_file)
+#' head(sample_annotation_file)
+#' ##merge data
+#' df=merge(sample_annotation_file[,c('IlmnID','CHR','MAPINFO')],
+#' sample_methylation_file,by='IlmnID')
+#'
+#' ## sort data
+#' df=df[order(df$CHR,df$MAPINFO),]
+#' thr_out=threshold_identification(df[,c(1,4:7)],package_workflow=TRUE,M=3,4,
+#' parameter_estimation_only=TRUE,seed=12345)
 #'
 
 setMethod("threshold_identification",
-          signature = signature(object1 = "matrix"),
-          definition = function(object1, package_workflow = TRUE,
-                                annotation_file = NULL, M = 3, N = 4,
-                                parameter_estimation_only = FALSE,
-                                seed = NULL, ...)
-          {
-            data1 <- as.data.frame(object1)
-            #arg.user <- list(...)
-            run <- threshold_identification_run(data = data1,
-                                                package_workflow =
-                                                  package_workflow,
-                                                annotation_file =
-                                                  annotation_file,
-                                                M = M, N = N,
-                                                parameter_estimation_only =
-                                                  parameter_estimation_only,
-                                                seed = seed, ...)
-            return(run)
-          })
+            signature = signature(object1 = "matrix"),
+    definition = function(object1, package_workflow = TRUE,
+        annotation_file = NULL, M = 3, N = 4,
+        parameter_estimation_only = FALSE,
+        seed = NULL, ...) {
+        data1 <- as.data.frame(object1)
+        run <- threshold_identification_run(data = data1,
+            package_workflow = package_workflow,
+            annotation_file = annotation_file,
+            M = M, N = N,
+            parameter_estimation_only = parameter_estimation_only,
+            seed = seed, ...)
+        return(run)
+    })
 
 
 
-################################################################################
+##############################################################################
 #' @rdname threshold_identification
 #' @export
 setMethod("threshold_identification",
-          signature = signature(object1 = "data.frame"),
-          definition = function(object1, package_workflow = TRUE,
-                              annotation_file = NULL, M = 3, N = 4,
-                              parameter_estimation_only = FALSE,
-                              seed = NULL, ...)
-          {
-            data1 <- object1
-            run <- threshold_identification_run(data = data1,
-                                                package_workflow =
-                                                  package_workflow,
-                                                annotation_file =
-                                                  annotation_file,
-                                                M = M, N = N,
-                                                parameter_estimation_only =
-                                                  parameter_estimation_only,
-                                                seed = seed, ...)
-            return(run)
-          })
+            signature = signature(object1 = "data.frame"),
+    definition = function(object1, package_workflow = TRUE,
+        annotation_file = NULL, M = 3, N = 4,
+        parameter_estimation_only = FALSE,
+        seed = NULL, ...) {
+        data1 <- object1
+        run <- threshold_identification_run(data = data1,
+            package_workflow = package_workflow,
+            annotation_file = annotation_file,
+            M = M, N = N,
+            parameter_estimation_only = parameter_estimation_only,
+            seed = seed, ...)
+        return(run)
+    })
 
-################################################################################
-
-
+##############################################################################
 

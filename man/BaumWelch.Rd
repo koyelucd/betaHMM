@@ -13,13 +13,13 @@ treatment groups each having \eqn{N} DNA samples.}
 
 \item{trained_params}{A list containing the initialized model parameters:
 \itemize{
-   \item A - The transition matrix for the betaHMM model.
-   \item tau - The initial distribution for the betaHMM model.
-   \item phi - The shape parameters for the observation sequence data
-               in the betaHMM model.
-   }}
+\item A - The transition matrix for the betaHMM model.
+\item tau - The initial distribution for the betaHMM model.
+\item phi - The shape parameters for the observation sequence data
+in the betaHMM model.}}
 
-\item{M}{Number of methylation states to be identified in a single DNA sample.}
+\item{M}{Number of methylation states to be identified in a single
+DNA sample.}
 
 \item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
@@ -33,19 +33,20 @@ treatment group.}
 \value{
 A list containing:
 \itemize{
-   \item A - The transition matrix estimated for the betaHMM model.
-   \item tau - The initial distribution estimated for the betaHMM model.
-   \item phi - The shape parameters estimated for the observed data
-               in the betaHMM model.
-   \item log_vec - A vector containing the log-likelihood values calculated
-                   for each iteration of the algorithm.
-   \item z - A matrix of dimension \eqn{C \times K} containing the conditional
-    posterior probability of each CpG site belonging to each of the
-     \eqn{K} hidden states.
-   }
+\item A - The transition matrix estimated for the betaHMM model.
+\item tau - The initial distribution estimated for the betaHMM model.
+\item phi - The shape parameters estimated for the observed data
+in the betaHMM model.
+\item log_vec - A vector containing the log-likelihood values
+calculated for each iteration of the algorithm.
+\item z - A matrix of dimension \eqn{C \times K} containing the
+conditional posterior probability of each CpG site belonging to each of
+the \eqn{K} hidden states.
+}
 }
 \description{
 The function determines the parameters of a homogeneous
- beta hidden Markov model (betaHMM), wherein the Baum-Welch algorithm
- constitutes a variant of the EM (Estimation-Maximization) procedure.
+beta hidden Markov model (betaHMM), wherein the Baum-Welch algorithm
+constitutes a variant of the EM (Estimation-Maximization) procedure.
 }
+\keyword{internal}

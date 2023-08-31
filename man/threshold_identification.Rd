@@ -32,8 +32,7 @@ threshold_identification(object1, ...)
 )
 }
 \arguments{
-\item{object1}{Methylation data and IlmnID. Maybe provided as
- a matrix
+\item{object1}{Methylation data and IlmnID. Maybe provided as a matrix
 or dataframe.}
 
 \item{...}{Extra parameters.}
@@ -45,13 +44,14 @@ If set to FALSE then the parameter annotation_file needs to be supplied.}
 \item{annotation_file}{A dataframe containing the EPIC methylation
 annotation file.}
 
-\item{M}{Number of methylation states to be identified in a single DNA sample.}
+\item{M}{Number of methylation states to be identified in a
+single DNA sample.}
 
 \item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
 
-\item{parameter_estimation_only}{If only model parameters are to be estimated
-then value is TRUE else FALSE.}
+\item{parameter_estimation_only}{If only model parameters are to be
+estimated then value is TRUE else FALSE.}
 
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
 }
@@ -62,4 +62,24 @@ An S4 object of class \code{threshold_Results}.
 The supported classes are \code{matrix} and \code{data.frame}.
 The output of \code{threshold_identification} is an S4 object of
 class \code{threshold_Results}.
+}
+\examples{
+## Use simulated data for the betaHMM workflow example
+set.seed(12345)
+library(betaHMM)
+
+## read files
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
+##merge data
+df=merge(sample_annotation_file[,c('IlmnID','CHR','MAPINFO')],
+sample_methylation_file,by='IlmnID')
+
+## sort data
+df=df[order(df$CHR,df$MAPINFO),]
+thr_out=threshold_identification(df[,c(1,4:7)],package_workflow=TRUE,M=3,4,
+parameter_estimation_only=TRUE,seed=12345)
+
 }

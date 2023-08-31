@@ -43,13 +43,13 @@ class \code{threshold_Results}}
 \item{chromosome}{The chromosome number for which the plot is to be displayed}
 
 \item{what}{The different plots that can be obtained are either
-"fitted density","kernel density" or
-"uncertainty" (default = "fitted density").}
+'fitted density','kernel density' or
+'uncertainty' (default = 'fitted density').}
 
 \item{treatment_group}{The names of the different treatment groups to be
 displayed in the plot.
 If no value is passed then the treatment group names from the
- \code{betaHMM} function are used.}
+\code{betaHMM} function are used.}
 
 \item{AUC}{The AUC values for that chromosome.}
 
@@ -60,8 +60,8 @@ identification.}
 
 \item{start_CpG}{The IlmnID of starting CpG site.}
 
-\item{end_CpG}{The IlmnID of ending CpG site/ the total number of CpGs to be
-plotted excluing the starting CpG site.}
+\item{end_CpG}{The IlmnID of ending CpG site/ the total number
+of CpGs to be plotted excluing the starting CpG site.}
 
 \item{N}{Number of replicates in each treatment group.}
 }
@@ -99,12 +99,16 @@ Plot a \code{threshold_Results} object.
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 
@@ -126,12 +130,16 @@ plot(beta_out, chromosome = "1", what = "fitted density", AUC = AUC_chr)
 plot(dmc_out, start_CpG = "cg14817997", end_CpG = 8)
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

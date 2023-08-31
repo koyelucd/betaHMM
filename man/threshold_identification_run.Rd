@@ -26,13 +26,14 @@ If set to FALSE then the parameter annotation_file needs to be supplied.}
 \item{annotation_file}{A dataframe containing the EPIC methylation
 annotation file.}
 
-\item{M}{Number of methylation states to be identified in a single DNA sample.}
+\item{M}{Number of methylation states to be identified in a
+single DNA sample.}
 
 \item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
 
-\item{parameter_estimation_only}{If only model parameters are to be estimated
-then value is TRUE else FALSE.}
+\item{parameter_estimation_only}{If only model parameters are to be
+estimated then value is TRUE else FALSE.}
 
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
 
@@ -53,15 +54,16 @@ HMM for beta valued DNA data for a single treatment condition
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
-## read methylation data
-methylation_data=sample_methylation_file
+library(betaHMM)
 
-## read sample EPIC annotation file
-legacy_data=sample_annotation_file
-
+## read files
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ##merge data
-df=merge(legacy_data[,c("IlmnID","CHR","MAPINFO")],
-methylation_data,by="IlmnID")
+df=merge(sample_annotation_file[,c('IlmnID','CHR','MAPINFO')],
+sample_methylation_file,by='IlmnID')
 
 ## sort data
 df=df[order(df$CHR,df$MAPINFO),]

@@ -12,14 +12,15 @@ dmr_identification_run(
 )
 }
 \arguments{
-\item{dmc_identification_object}{a \code{dmcResults} object or the assay data
-from the dmcResults.}
+\item{dmc_identification_object}{a \code{dmcResults} object or
+the assay data from the dmcResults.}
 
 \item{DMC_count}{The minimal number of consecutive CpGs in a DMR.}
 
-\item{parallel_process}{The "TRUE" option results in parallel processing of
+\item{parallel_process}{The 'TRUE' option results in parallel processing of
 the DMCs from each chromosome for increased computational efficiency.
- The default option has been set as "FALSE" due to package testing limitations.}
+The default option has been set as 'FALSE' due to package testing
+limitations.}
 
 \item{...}{extra arguments}
 }
@@ -43,12 +44,16 @@ chromosome.
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

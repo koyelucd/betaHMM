@@ -24,9 +24,9 @@ a particular hidden state, for each chromosome.}
 }
 \value{
 The function returns an object of the
-        \code{\link[betaHMM:dmcResults]{dmcResults}} class
-        which contains a SimpleList of assay data which contains the
-        following values:
+\code{\link[betaHMM:dmcResults]{dmcResults}} class
+which contains a SimpleList of assay data which contains the
+following values:
 \itemize{
 \item CHR Chromosome number
 \item MAPINFO Mapinfo
@@ -53,18 +53,22 @@ area-under-curve (AUC) technique. By incorporating user-defined threshold
 values for AUC alongside the associated uncertainties in membership within
 that hidden state, the aim is to pinpoint the most distinctively methylated
 states. This process facilitates the identification of CpGs that exhibit the
- most notable differential methylation, guided by the predefined threshold
- criteria.
+most notable differential methylation, guided by the predefined threshold
+criteria.
 }
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

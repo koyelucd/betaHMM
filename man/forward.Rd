@@ -17,15 +17,15 @@ for the observed data).}
 \value{
 A list containing:
 \itemize{
-   \item log_alpha - A \eqn{C*K} matrix (where \eqn{C} is the number of CpG
-   sites and \eqn{K} is the number of hidden states) containing the
-   logarithmized forward probabilities.
-   \item scaled_logL - The log-likelihood calculated using the forward
-                       probabilities.
-   }
+\item log_alpha - A \eqn{C*K} matrix (where \eqn{C} is the number of CpG
+sites and \eqn{K} is the number of hidden states) containing the
+logarithmized forward probabilities.
+\item scaled_logL - The log-likelihood calculated using the forward
+probabilities.}
 }
 \description{
 Computes the forward probabilities for \eqn{K} hidden states
-         using the initial distribution, transition matrix and distribution
-         parameters.
+using the initial distribution, transition matrix and distribution
+parameters.
 }
+\keyword{internal}

@@ -19,13 +19,14 @@ betaHMMrun(
 \arguments{
 \item{methylation_data}{A dataframe of dimension \eqn{(C \times (N \times R)
 )+1} containing methylation values for \eqn{C} CpG sites from \eqn{R}
-            treatment groups each having \eqn{N} DNA samples and the IlmnID
-            for each CpG site.}
+treatment groups each having \eqn{N} DNA samples and the IlmnID
+for each CpG site.}
 
 \item{annotation_file}{A dataframe containing the EPIC methylation
 annotation file.}
 
-\item{M}{Number of methylation states to be identified in a single DNA sample.}
+\item{M}{Number of methylation states to be identified in a
+single DNA sample.}
 
 \item{N}{Number of DNA samples (patients/replicates) collected for each
 treatment group.}
@@ -36,9 +37,10 @@ treatment group.}
 conditions. If no value is passed then default values of sample names,
 e.g. Sample 1, Sample 2, etc are used as legend text (default = NULL).}
 
-\item{parallel_process}{The "TRUE" option results in parallel processing of
+\item{parallel_process}{The 'TRUE' option results in parallel processing of
 the models for each chromosome for increased computational efficiency.
-The default option has been set as "FALSE" due to package testing limitations.}
+The default option has been set as 'FALSE' due to package testing
+limitations.}
 
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
 
@@ -46,30 +48,30 @@ The default option has been set as "FALSE" due to package testing limitations.}
 }
 \value{
 The function returns an object of the
-        \code{\link[betaHMM:betaHMMResults]{betaHMMResults}} class
-        which contains a SimpleList of assay data containing the posterior
-             probability of each CpG site belonging to each of the
-             \eqn{K} hidden states and the following values as metadata:
+\code{\link[betaHMM:betaHMMResults]{betaHMMResults}} class
+which contains a SimpleList of assay data containing the posterior
+probability of each CpG site belonging to each of the
+\eqn{K} hidden states and the following values as metadata:
 \itemize{
 \item K - The number of hidden states identified using the betaHMM model.
 \item C - The number of CpG sites analysed using the betaHMM model.
 \item N - The number of DNA samples corresponding to each
-          treatment group analysed using the betaHMM model.
+treatment group analysed using the betaHMM model.
 \item R - The number of treatment groups analysed using the betaHMM model.
 \item A - The transition matrix estimated for the betaHMM model.
 \item tau - The initial distribution estimated for the betaHMM model.
-\item treatment_group - The names of the treatment groups/conditions analysed.
+\item treatment_group - The names of the treatment
+groups/conditions analysed.
 \item phi - The shape parameters estimated for the observed data
-               in the betaHMM model.
+in the betaHMM model.
 \item llk - A vector containing the log-likelihood values calculated
-                   for each iteration of the algorithm.
+for each iteration of the algorithm.
 \item hidden_states - The vector containing the estimated hidden states
-                         for each CpG sites.
-   }
+for each CpG sites. }
 }
 \description{
 A homogeneous hidden Markov model for the beta valued DNA
-             methylation data.
+methylation data.
 }
 \details{
 The betaHMM function employs initially set parameters (utilizing a
@@ -82,12 +84,16 @@ of hidden states using the Viterbi algorithm.
 \examples{
 ## Use simulated data for the betaHMM workflow example
 set.seed(12345)
+library(betaHMM)
 
 ## read files
-methylation_data <- sample_methylation_file
-annotation_data <- sample_annotation_file
+data(sample_methylation_file)
+head(sample_methylation_file)
+data(sample_annotation_file)
+head(sample_annotation_file)
 ## Run betaHMM function
-beta_out <- betaHMM(methylation_data, annotation_data, M = 3, N = 4, R = 2,
+beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
+                    M = 3, N = 4, R = 2,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 
