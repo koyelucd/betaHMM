@@ -126,10 +126,10 @@ following steps:
     \item The \textbf{DMC identification} function uses the betaHMM output and
     selects the differentially methylated hidden states and the DMCs.
     The area-under-curve (AUC) method is used to select the DMCs.
-    \item The \textbf{DMR identification} function uses the DMC 
-    function output.The function also has a user-defined parameter of the 
-    minimum number of adjacent CpGs to be in a DMR. The output of this 
-    function is a dataframe containing the number of DMCs in a DMR, 
+    \item The \textbf{DMR identification} function uses the DMC
+    function output.The function also has a user-defined parameter of the
+    minimum number of adjacent CpGs to be in a DMR. The output of this
+    function is a dataframe containing the number of DMCs in a DMR,
     the CpG sites and the starting and ending location information of that DMR.
 \end{itemize}
 
@@ -214,8 +214,8 @@ summary(dmc_out)
 
 The fitted density estimates, kernel density estimates and the uncertainty in
 the hidden state assignment can be viewed using the plot function for the
-betaHMM output. As the parameters are estimated for each chromosome 
-individually, the plot can be obtained for each chromosome. 
+betaHMM output. As the parameters are estimated for each chromosome
+individually, the plot can be obtained for each chromosome.
 The chromosome number needs to be selected using the `chromosome` parameter
 in the function.
 
@@ -236,7 +236,7 @@ input parameter to the plotting function. This facilitates the inclusion of the
 specified threshold alongside the visualization of uncertainties.
 
 ```{r betaHMMplot2,include=TRUE,echo=TRUE,fig.width=6,fig.height=5,dev='png'}
-plot(betaHMM_out, chromosome = "7", what = "uncertainty", 
+plot(betaHMM_out, chromosome = "7", what = "uncertainty",
         uncertainty_threshold = 0.2)
 ```
 
@@ -245,10 +245,10 @@ plot(betaHMM_out, chromosome = "7", what = "uncertainty",
 The spatially correlated CpG sites result in a region of CpG sites having
 similar methylation states thus resulting in forming of biologically
 significant regions known as the differentially methylated region (DMR). A
-user-defined parameter `DMC_count` is used define the number of adjacent DMCs 
+user-defined parameter `DMC_count` is used define the number of adjacent DMCs
 in a DMR. By default the value is set to 2. If no value is provided,
-the function identifies regions with adjacent 2 or more DMCs in a chromosome 
-as a DMR. The DMR location information along with the DMCs in that DMR are 
+the function identifies regions with adjacent 2 or more DMCs in a chromosome
+as a DMR. The DMR location information along with the DMCs in that DMR are
 provided as an S4 output of class `dmrResults`. The output can be accessed
 using the S4 assay method.
 

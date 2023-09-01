@@ -66,7 +66,7 @@ AUC_chr <- AUC(dmc_out)
 plot(betaHMM_out, chromosome = "7", what = "fitted density", AUC = AUC_chr)
 
 ## ----betaHMMplot2,include=TRUE,echo=TRUE,fig.width=6,fig.height=5,dev='png'----
-plot(betaHMM_out, chromosome = "7", what = "uncertainty", 
+plot(betaHMM_out, chromosome = "7", what = "uncertainty",
         uncertainty_threshold = 0.2)
 
 ## ----dmr,include=TRUE, echo=TRUE----------------------------------------------

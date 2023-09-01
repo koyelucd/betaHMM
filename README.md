@@ -1,5 +1,5 @@
 # betaHMM: a hidden Markov model to identify differential methylation sites and
-# regions from beta-valued methylation data 
+ regions from beta-valued methylation data 
 
 Authors: KOYEL MAJUMDAR, ISOBEL CLAIRE GORMLEY, THOMAS BRENDAN MURPHY, ROMINA
 SILVA, ANTOINETTE SABRINA PERRY, RONALD WILLIAM WATSON,
@@ -32,7 +32,7 @@ betaHMM_out <- betaHMM(sample_methylation_file,
                                 N = 4,
                                 R = 2,
                                 parallel_process = FALSE,
-                                seed = my.seed,
+                                seed = 321,
                                 treatment_group = c("Benign","Tumour"))
 ```
 where `M` represents the number of methylation state in a DNA sample, `N`
