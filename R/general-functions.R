@@ -27,8 +27,10 @@ globalVariables(c("betaHMMresults", "CHR", "IlmnID", "MAPINFO", "chr",
 #' @param parallel_process The 'TRUE' option results in parallel processing of
 #' the models for each chromosome for increased computational efficiency.
 #' The default option has been set as 'FALSE' due to package testing
-#'limitations.
+#' limitations.
 #' @param seed Seed to allow for reproducibility (default = NULL).
+#' @param iterations Number of iterations for algorithm convergence
+#' (default=100).
 #' @param ... Extra arguments
 #' @return The function returns an object of the
 #' \code{\link[betaHMM:betaHMMResults]{betaHMMResults}} class
@@ -60,7 +62,7 @@ globalVariables(c("betaHMMresults", "CHR", "IlmnID", "MAPINFO", "chr",
 #'
 betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
                         treatment_group = NULL, parallel_process = FALSE,
-                        seed = NULL, ...) {
+                        seed = NULL,iterations=100, ...) {
     if (is.null(methylation_data)) {
         stop("Please provide a dataframe containing methylation values.")
     } else if (is.null(annotation_file)) {
@@ -115,13 +117,14 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
     my.cluster <- parallel::makeCluster(ncores - 1)
     doParallel::registerDoParallel(cl = my.cluster)
     `%dopar%` <- foreach::`%dopar%`; `%do%` <- foreach::`%do%`
-    betaHMM_workflow <- function(data_chr, K, M, N, R, chr, seed = NULL) {
+    betaHMM_workflow <- function(data_chr, K, M, N, R, chr, seed = NULL,
+                                 iterations=100) {
         data <- subset(data_chr, select = -c(CHR, MAPINFO, IlmnID))
         data_w_ilmnid <- subset(data_chr, select = -c(CHR, MAPINFO))
         data <- as.data.frame(data)
         data_w_ilmnid <- as.data.frame(data_w_ilmnid)
         trained_params <- initialise_parameters(data_w_ilmnid, M, N, R, seed)
-        out_baumwelch <- BaumWelch(data, trained_params, M, N, R, seed)
+        out_baumwelch<-BaumWelch(data,trained_params,M,N,R,seed,iterations)
         out_viterbi <- Viterbi(data, M, N, R, out_baumwelch$tau,
                                 out_baumwelch$A, out_baumwelch$phi)
         return(list(A = out_baumwelch$A, tau = out_baumwelch$tau,
@@ -136,7 +139,7 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
                                                 list(), list(), list(),
                                                 list(), list())) %dopar%
     betaHMM_workflow(sorted_data[sorted_data$CHR == chr_unique[chr], ],
-                    K, M, N, R, chr_unique[chr],seed)
+                    K, M, N, R, chr_unique[chr],seed,iterations)
     parallel::stopCluster(cl = my.cluster)
     z_final_out <- as.data.frame(do.call(rbind, beta_chr_out[[5]]))
     chromosome_number <- unlist(beta_chr_out[[8]])

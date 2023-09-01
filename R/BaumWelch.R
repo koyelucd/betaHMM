@@ -17,7 +17,7 @@
 #' @param N Number of DNA samples (patients/replicates) collected for each
 #' treatment group.
 #' @param R Number of treatment groups (For. eg: Benign and Tumour).
-#' @param n.iter Number of iterations for algorithm convergence.
+#' @param iterations Number of iterations for algorithm convergence.
 #' @param seed Seed to allow for reproducibility (default = NULL).
 #' @return A list containing:
 #' \itemize{
@@ -35,11 +35,12 @@
 #'
 #'
 
-BaumWelch <- function(data, trained_params, M, N, R, n.iter= 100,seed = NULL){
+BaumWelch <- function(data, trained_params, M, N, R,
+                        iterations= 100,seed = NULL){
     K <- as.numeric(M)^as.numeric(R); C <- nrow(data)
     oldlogL <- 1; BW_limit_accuracy <- 1e-5
     logL_vec <- vector(); logL_vec <- oldlogL
-    for(i in seq(1,n.iter)){
+    for(i in seq(1,iterations)){
         probabilities <- list();n1 <- 1;n2 <- N[1]
         for(r in seq(1,R))
         {

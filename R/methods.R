@@ -47,13 +47,15 @@
 
 setMethod("betaHMM", signature = signature(methylation_data = "matrix",
 annotation_file = "matrix"), definition = function(methylation_data,
-annotation_file, M = 3, N = 4, R = 2, seed = NULL,
-...) {
+annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
+parallel_process = FALSE, seed = NULL,iterations=100,...) {
 data1 <- as.data.frame(methylation_data)
 data2 <- as.data.frame(annotation_file)
 # arg.user <- list(...)
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
-M = M, N = N, R = R, seed = seed, ...)
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -64,12 +66,16 @@ return(run)
 #' @export
 setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
 annotation_file = "data.frame"), definition = function(methylation_data,
-annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,
 ...) {
 data1 <- methylation_data
 data2 <- annotation_file
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
-M = M, N = N, R = R, seed = seed, ...)
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -81,12 +87,14 @@ setMethod("betaHMM",
 signature=signature(methylation_data="RangedSummarizedExperiment",
 annotation_file = "RangedSummarizedExperiment"),
 definition = function(methylation_data, annotation_file,
-M = 3, N = 4, R = 2, seed = NULL, ...) {
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100, ...) {
 data1 <- assay(methylation_data)
 data2 <- assay(annotation_file)
-run <- betaHMMrun(methylation_data = data1,
-annotation_file = data2, M = M, N = N,
-R = R, seed = seed, ...)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -96,12 +104,16 @@ return(run)
 setMethod("betaHMM",
 signature=signature(methylation_data="RangedSummarizedExperiment",
 annotation_file = "matrix"), definition = function(methylation_data,
-annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,
 ...) {
 data1 <- assay(methylation_data)
 data2 <- as.data.frame(annotation_file)
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
-M = M, N = N, R = R, seed = seed, ...)
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 ##############################################################################
@@ -110,12 +122,16 @@ return(run)
 setMethod("betaHMM",
 signature=signature(methylation_data="RangedSummarizedExperiment",
 annotation_file = "data.frame"), definition = function(methylation_data,
-annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,
 ...) {
 data1 <- assay(methylation_data)
 data2 <- annotation_file
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
-M = M, N = N, R = R, seed = seed, ...)
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -125,12 +141,14 @@ return(run)
 setMethod("betaHMM", signature = signature(methylation_data = "matrix",
 annotation_file = "RangedSummarizedExperiment"),
 definition = function(methylation_data, annotation_file,
-M = 3, N = 4, R = 2, seed = NULL, ...) {
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100, ...) {
 data1 <- as.data.frame(methylation_data)
 data2 <- assay(annotation_file)
-run <- betaHMMrun(methylation_data = data1,
-annotation_file = data2, M = M, N = N,
-R = R, seed = seed, ...)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -140,12 +158,14 @@ return(run)
 setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
 annotation_file = "RangedSummarizedExperiment"),
 definition = function(methylation_data, annotation_file,
-M = 3, N = 4, R = 2, seed = NULL, ...) {
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100,...) {
 data1 <- methylation_data
 data2 <- assay(annotation_file)
-run <- betaHMMrun(methylation_data = data1,
-annotation_file = data2, M = M, N = N,
-R = R, seed = seed, ...)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -154,12 +174,16 @@ return(run)
 #' @export
 setMethod("betaHMM", signature = signature(methylation_data = "matrix",
 annotation_file = "data.frame"), definition = function(methylation_data,
-annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+annotation_file, M = 3, N = 4, R = 2,treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,
 ...) {
 data1 <- as.data.frame(methylation_data)
 data2 <- annotation_file
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
-M = M, N = N, R = R, seed = seed, ...)
+                    M = M, N = N, R = R, treatment_group = treatment_group,
+                    parallel_process = parallel_process,
+                    seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -168,12 +192,16 @@ return(run)
 #' @export
 setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
 annotation_file = "matrix"), definition = function(methylation_data,
-annotation_file, M = 3, N = 4, R = 2, seed = NULL,
+annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,
 ...) {
 data1 <- methylation_data
 data2 <- as.data.frame(annotation_file)
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
-M = M, N = N, R = R, seed = seed, ...)
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
 return(run)
 })
 

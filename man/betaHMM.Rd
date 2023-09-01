@@ -26,7 +26,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -36,7 +39,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -46,7 +52,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -56,7 +65,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -66,7 +78,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -76,7 +91,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -86,7 +104,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -96,7 +117,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 
@@ -106,7 +130,10 @@ betaHMM(methylation_data, annotation_file, ...)
   M = 3,
   N = 4,
   R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
   seed = NULL,
+  iterations = 100,
   ...
 )
 }
@@ -131,7 +158,19 @@ treatment group.}
 
 \item{R}{Number of treatment groups (For. eg: Benign and Tumour).}
 
+\item{treatment_group}{The names of each treatment groups/
+conditions. If no value is passed then default values of sample names,
+e.g. Sample 1, Sample 2, etc are used as legend text (default = NULL).}
+
+\item{parallel_process}{The 'TRUE' option results in parallel processing of
+the models for each chromosome for increased computational efficiency.
+The default option has been set as 'FALSE' due to package testing
+limitations.}
+
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
+
+\item{iterations}{Number of iterations for algorithm convergence
+(default=100).}
 }
 \value{
 An S4 object of class \code{betaHMMResults}, where conditional
@@ -160,7 +199,7 @@ data(sample_annotation_file)
 head(sample_annotation_file)
 ## Run betaHMM function
 beta_out <- betaHMM(sample_methylation_file, sample_annotation_file,
-                    M = 3, N = 4, R = 2,
+                    M = 3, N = 4, R = 2,iterations=6,
                     parallel_process = FALSE, seed = 12345,
                     treatment_group = c("Benign","Tumour"))
 

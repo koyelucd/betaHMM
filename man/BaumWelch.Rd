@@ -4,7 +4,7 @@
 \alias{BaumWelch}
 \title{HMM parameter estimation using Baum-Welch algorithm}
 \usage{
-BaumWelch(data, trained_params, M, N, R, n.iter = 100, seed = NULL)
+BaumWelch(data, trained_params, M, N, R, iterations = 100, seed = NULL)
 }
 \arguments{
 \item{data}{A dataframe of dimension \eqn{C \times (N \times R)} containing
@@ -26,7 +26,7 @@ treatment group.}
 
 \item{R}{Number of treatment groups (For. eg: Benign and Tumour).}
 
-\item{n.iter}{Number of iterations for algorithm convergence.}
+\item{iterations}{Number of iterations for algorithm convergence.}
 
 \item{seed}{Seed to allow for reproducibility (default = NULL).}
 }
