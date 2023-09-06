@@ -224,7 +224,7 @@ the parameter `AUC`. The AUC values estimated using the `dmc_identification`
 function is passed as an input parameter to the function and the AUC metrics
 corresponding to the selected chromosome is displayed in the plot panels.
 
-```{r betaHMMplot,include=TRUE,echo=TRUE,fig.width=6.5,fig.height=5,dev='png'}
+```{r betaHMMplot,include=TRUE,echo=TRUE,fig.width=8,fig.height=5,dev='png'}
 AUC_chr <- AUC(dmc_out)
 plot(betaHMM_out, chromosome = "7", what = "fitted density", AUC = AUC_chr)
 ```
@@ -309,7 +309,7 @@ threshold(threshold_out)
 
 ## Plotting the results from threshold identification function
 
-```{r thresholdplot,include=TRUE, echo=TRUE,fig.width = 5, fig.height = 4,dev = 'png'}
+```{r thresholdplot,include=TRUE,echo=TRUE,fig.width=5,fig.height=4,dev='png'}
 plot(threshold_out, what = "fitted density")
 ```
 

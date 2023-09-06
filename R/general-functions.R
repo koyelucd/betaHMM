@@ -118,7 +118,7 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
     doParallel::registerDoParallel(cl = my.cluster)
     `%dopar%` <- foreach::`%dopar%`; `%do%` <- foreach::`%do%`
     betaHMM_workflow <- function(data_chr, K, M, N, R, chr, seed = NULL,
-                                 iterations=100) {
+                                    iterations=100) {
         data <- subset(data_chr, select = -c(CHR, MAPINFO, IlmnID))
         data_w_ilmnid <- subset(data_chr, select = -c(CHR, MAPINFO))
         data <- as.data.frame(data)

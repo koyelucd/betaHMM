@@ -61,7 +61,7 @@ head(dmc_df)
 ## ----dmcsummary,include=TRUE, echo=TRUE---------------------------------------
 summary(dmc_out)
 
-## ----betaHMMplot,include=TRUE,echo=TRUE,fig.width=6.5,fig.height=5,dev='png'----
+## ----betaHMMplot,include=TRUE,echo=TRUE,fig.width=8,fig.height=5,dev='png'----
 AUC_chr <- AUC(dmc_out)
 plot(betaHMM_out, chromosome = "7", what = "fitted density", AUC = AUC_chr)
 
@@ -90,7 +90,7 @@ threshold_out <- threshold_identification(pca_methylation_data[,1:5],
                                             seed = my.seed)
 threshold(threshold_out)
 
-## ----thresholdplot,include=TRUE, echo=TRUE,fig.width = 5, fig.height = 4,dev = 'png'----
+## ----thresholdplot,include=TRUE,echo=TRUE,fig.width=5,fig.height=4,dev='png'----
 plot(threshold_out, what = "fitted density")
 
 ## -----------------------------------------------------------------------------

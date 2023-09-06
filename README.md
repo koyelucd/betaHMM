@@ -58,7 +58,7 @@ function is an S4 object of class `dmcResults` and the output of the
 `dmr_identification` function is an S4 object of class `dmrResults` 
 on which standard `plot` and `summary` functions can be directly applied; 
 the former uses functionalities from the 
-[ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html) package.
+[ggplot2]( https://cran.r-project.org/package=ggplot2) package.
 
 ### Reference
 

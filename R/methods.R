@@ -588,8 +588,8 @@ setMethod(f="dmr_identification",
 #' @rdname dmr_identification
 #' @export
 setMethod(f="dmr_identification",
-            signature = signature(dmc_identification_object = "data.frame"),
-            definition = function(dmc_identification_object, DMC_count = 2,
+            signature(dmc_identification_object = "data.frame"),
+    definition = function(dmc_identification_object, DMC_count = 2,
                                 ...) {
             dmr_df <- dmr_identification_run(dmc_identification_object =
                                                 dmc_identification_object,

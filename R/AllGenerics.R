@@ -70,8 +70,8 @@ setGeneric("summary", function(object, ...) standardGeneric("summary"))
 #' @export
 setGeneric("dmr_identification",
             function(dmc_identification_object, ...)
-            standardGeneric("dmr_identification"),
-            signature = c("dmc_identification_object"))
+    standardGeneric("dmr_identification"),
+    signature = c("dmc_identification_object"))
 
 #' @rdname dmc_identification
 #' @export

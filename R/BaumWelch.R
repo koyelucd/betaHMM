@@ -17,8 +17,8 @@
 #' @param N Number of DNA samples (patients/replicates) collected for each
 #' treatment group.
 #' @param R Number of treatment groups (For. eg: Benign and Tumour).
-#' @param iterations Number of iterations for algorithm convergence.
 #' @param seed Seed to allow for reproducibility (default = NULL).
+#' @param iterations Number of iterations for algorithm convergence.
 #' @return A list containing:
 #' \itemize{
 #' \item A - The transition matrix estimated for the betaHMM model.
@@ -36,11 +36,11 @@
 #'
 
 BaumWelch <- function(data, trained_params, M, N, R,
-                        iterations= 100,seed = NULL){
+                        seed = NULL,iterations= 100){
     K <- as.numeric(M)^as.numeric(R); C <- nrow(data)
     oldlogL <- 1; BW_limit_accuracy <- 1e-5
     logL_vec <- vector(); logL_vec <- oldlogL
-    for(i in seq(1,iterations)){
+    for(iter in seq(1,iterations)){
         probabilities <- list();n1 <- 1;n2 <- N[1]
         for(r in seq(1,R))
         {
@@ -131,5 +131,5 @@ BaumWelch <- function(data, trained_params, M, N, R,
             break}
         oldlogL <- logL}
     log_vec <- logL_vec[-1]
-    return(list(A = A,  tau = tau, phi = phi,log_vec = logL_vec, z = eta))
+    return(list(A = A,  tau = tau, phi = phi,log_vec = log_vec, z = eta))
 }
