@@ -78,7 +78,7 @@ head(dmr_df)
 summary(dmr_out)
 
 ## ----dmrplot,include=TRUE,echo=TRUE,fig.width=7,fig.height = 5, dev = 'png'----
-p<-plot(dmc_out, start_CpG = "cg17750844", end_CpG = 15)
+plot(dmc_out, start_CpG = "cg17750844", end_CpG = 15)
 
 ## ----threshold,include=TRUE, echo=TRUE----------------------------------------
 threshold_out <- threshold_identification(pca_methylation_data[,1:5],

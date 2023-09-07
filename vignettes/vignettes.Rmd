@@ -28,33 +28,21 @@ knitr::opts_chunk$set(eval = TRUE)
 
 # Introduction
 
-The addition of a methyl group from a cytosine-guanine dinucleotide (CpG) site,
-known as DNA methylation, arises as a result of various environmental factors
-and is an important biomarker for disease progression. In diploid individuals,
-a CpG site is hypermethylated if both strands are methylated, hypomethylated if
-neither of the strands is methylated, and hemimethylated if only a single strand
-is methylated. Identifying differentially methylated CpG sites (DMC) and regions
-(DMR) between samples, such as benign and tumour can help identify the effect of
-environmental stressors on epigenetic changes.
+DNA methylation, the addition of a methyl group to a cytosine-guanine 
+dinucleotide (CpG) site, is influenced by environmental factors and serves as a 
+disease biomarker. In diploid individuals, CpG sites are hypermethylated (both 
+strands methylated), hypomethylated (neither strand methylated), or 
+hemimethylated (one strand methylated). Identifying differentially methylated 
+CpG sites (DMC) and regions (DMR) can reveal the impact of environmental 
+stressors.
 
-Methylation levels at CpG sites, termed beta values, represents the proportion
-of methylated probes. The beta values lie within [0,1] and are typically
-modelled using beta distributions. Due to the lack of suitable, scalable methods
-for the beta values, they are usually logit transformed into approximately
-Gaussian-distributed M-values for modelling. Typically, adhoc thresholds are
-selected to identify the methylation state of a CpG site, and based on this
-classification, DMCs are identified between different samples. To instead
-directly model the beta values, a family of beta mixture models (BMM) was
-recently proposed but it inherently assumes spatial independence between
-adjacent CpG sites. However in reality, a high level of spatial correlation
-exists between neighbouring CpG sites. To model the untransformed beta values
-while appropriately considering the spatial correlation between adjacent CpGs,
-we propose here a homogeneous hidden Markov model (HMM) approach. The betaHMM
-identifies DMCs and DMRs while simultaneously accounting for the spatial
-dependency between adjacent CpG sites and the relationship between samples
-within each group. A comprehensive simulation study and application on prostate
-cancer data demonstrates that the betaHMM effectively models latent methylation
-state changes while considering the genome-wide spatial dependency.
+Methylation levels, called beta values, represent the proportion of methylated 
+probes, usually modeled with beta distributions. They are often logit 
+transformed into M-values for modeling. To directly model beta values and 
+account for spatial correlation between CpG sites, we propose a homogeneous 
+hidden Markov model (HMM) approach called betaHMM. It identifies DMCs and DMRs 
+while considering spatial dependency and sample relationships. Simulation and 
+prostate cancer data demonstrate its effectiveness.
 
 This document gives a quick tour of the functionalities in **betaHMM**. See
 `help(package="betaHMM")` for further details and references provided by
@@ -67,8 +55,8 @@ Before starting the **betaHMM** walk through, the user should have a working
 R software environment installed on their machine. The **betaHMM** package has
 the following dependencies which, if not already installed on the machine will
 automatically be installed along with the package:
-**stats, ggplot2,  scales, methods, pROC, foreach, doParallel, cowplot, dplyr,
-tidyr, stringr**.
+**stats, ggplot2, utils,  scales, methods, pROC, foreach, doParallel, cowplot, 
+dplyr, tidyr, stringr**.
 
 
 Assuming that the user has the **betaHMM** package installed,
@@ -82,28 +70,21 @@ library(betaHMM)
 
 
 ## Loading the methylation and annotation data
-The **betaHMM** software package presents a prepared methylation dataframe that
-encompasses beta values originating from DNA samples collected from four
-patients afflicted with high-grade prostate cancer. These samples derive from
-both benign and tumor prostate tissues and have undergone methylation profiling
-using the Infinium MethylationEPIC Beadchip technology. The dataset consists of
-DNA samples from R = 2 treatment conditions from each of N = 4 patients,
-with each DNA sample containing beta
-values corresponding to C = 694,820 CpG sites. This data collection was
-conducted as part of a study on prostate cancer methylomics (Silva et al. 2020).
+The **betaHMM** software package offers a pre-processed methylation dataset 
+containing beta values obtained from DNA samples collected from four patients 
+with high-grade prostate cancer. These samples encompass both benign and tumor 
+prostate tissues and were subjected to methylation profiling using Infinium 
+MethylationEPIC Beadchip technology. The dataset comprises DNA samples from 
+R = 2 treatment conditions for each of N = 4 patients, with each DNA sample
+providing beta values for C = 694,820 CpG sites. This data collection was 
+part of a study on prostate cancer methylomics (Silva et al. 2020). For 
+testing purposes, a subset of CpG sites from chromosome 7 has been included 
+in the package.
 
-The methylation array data underwent rigorous quality control and preprocessing
-through utilization of the RnBeads package (Mueller et al. 2019). Following
-this, the data underwent normalization, with the exclusion of probes situated
-outside of CpG sites and those on the sex chromosome. Furthermore, CpG sites
-bearing missing values were eliminated from the resultant dataset. For testing
-purposes, a subset of CpG sites from chromosome 7 has been provided in the
-package.
-
-A subset of the EPIC annotation file is also available in this package and needs
-to be provided as an input to the betaHMM function.
-Users can load these two data from the package and examine the initial six rows
-present in the dataframes using the following procedure:
+This package also provides a subset of the EPIC annotation file, which 
+users need to input into the **betaHMM** function. Users can load these two 
+datasets from the package and inspect the first six rows in the dataframes 
+using the following procedure:
 
 ```{r data,include=TRUE, echo=TRUE}
 data(pca_methylation_data)
@@ -116,28 +97,31 @@ head(annotation_data)
 
 ## The betaHMM workflow
 
-The betaHMM model for identifying DMCs and DMRs has three important functions.
-The entire process is applied for each chromosome individually and has the
-following steps:
+The betaHMM model, which is employed to identify DMCs (differentially 
+methylated CpG sites) and DMRs (differentially methylated regions), consists of
+three crucial functions. The entire process is carried out separately for each
+chromosome and involves the following steps:
 \begin{itemize}
-    \item the \textbf{betaHMM} function for model parameter and hidden state
-    estimation. As discussed previously this function has 3 main steps:
-    initialisation, Baum-Welch algorithm and Viterbi algorithm.
-    \item The \textbf{DMC identification} function uses the betaHMM output and
-    selects the differentially methylated hidden states and the DMCs.
-    The area-under-curve (AUC) method is used to select the DMCs.
-    \item The \textbf{DMR identification} function uses the DMC
-    function output.The function also has a user-defined parameter of the
-    minimum number of adjacent CpGs to be in a DMR. The output of this
-    function is a dataframe containing the number of DMCs in a DMR,
-    the CpG sites and the starting and ending location information of that DMR.
+    \item the \textbf{betaHMM} function: This function handles model parameter
+    and hidden state estimation.It comprises three main steps: initialization,
+    the Baum-Welch algorithm, and the Viterbi algorithm.
+    \item The \textbf{DMC identification} function: This function utilizes the
+    output from the betaHMM and identifies the hidden states that are 
+    differentially methylated, along with the DMCs themselves. The selection of
+    DMCs is based on the area-under-curve (AUC) method.
+    \item The \textbf{DMR identification} function: This function operates on 
+    the output from the DMC identification function. It includes a user-defined
+    parameter specifying the minimum number of adjacent CpGs required to form a
+    DMR. The output of this function is a dataframe that contains information 
+    about the number of DMCs within a DMR, the CpG sites involved, and the 
+    starting and ending locations of the DMR.
 \end{itemize}
 
 ## Model parameter estimation
 
-The first step of the workflow is to apply the Baum-Welch algorithm to estimate
-the model parameters and subsequently apply the Viterbi algorithm to find the
-most probable sequence of hidden states.
+The initial phase of the workflow involves employing the Baum-Welch algorithm 
+to estimate the model parameters. Subsequently, we apply the Viterbi algorithm
+to determine the most probable sequence of hidden states.
 
 ```{r betaHMM,include=TRUE, echo=TRUE}
 M <- 3 ## No. of methylation states in a DNA sample type
@@ -158,6 +142,7 @@ betaHMM_out <- betaHMM::betaHMM(pca_methylation_data,
 ## Summary of model parameters
 The resulting output of a call to betaHMM is an S4 object of class
 betaHMMResults.
+
 ```{r betaHMMclass,include=TRUE, echo=TRUE}
 class(betaHMM_out)
 ```
@@ -186,17 +171,18 @@ summary(betaHMM_out)
 
 ## DMC identification
 
-Once the parameters and the hidden states are estimated, The AUC metric is
-calculated to find the dissimilarities between the cumulative ditsributions
-estimated for each hidden state in each chromosome. A user-defined threshold for
-the AUC metric is used to identify the most differentially methylated hidden
-states and a user-defined threshold for the measure of uncertainty of belonging
-to those most differentially methylated hidden states are used to identify the
-most differentially methylated CpG sites.
+After estimating the parameters and hidden states, we proceed to calculate the
+AUC metric, which quantifies the dissimilarities between the cumulative 
+distributions estimated for each hidden state within each chromosome. A 
+user-defined threshold for the AUC metric is then applied to identify the most
+differentially methylated hidden states. Additionally, we utilize a 
+user-defined threshold for the measure of uncertainty regarding membership in
+these highly differentially methylated hidden states to pinpoint the most 
+differentially methylated CpG sites.
 
-The dataframe containing the CpG site location information and the methylation
-values, the hidden states assignment and flag denoting a DMC or not can be
-assessed through the S4 `assay` command.
+To access the dataframe containing information about CpG site locations, 
+methylation values, hidden state assignments, and a flag indicating DMC status,
+you can use the S4 `assay` command.
 
 ```{r dmc,include=TRUE, echo=TRUE}
 dmc_out <- dmc_identification(betaHMM_out)
@@ -212,28 +198,31 @@ summary(dmc_out)
 
 ## Plot the density estimates of the model parameter estimates
 
-The fitted density estimates, kernel density estimates and the uncertainty in
-the hidden state assignment can be viewed using the plot function for the
-betaHMM output. As the parameters are estimated for each chromosome
-individually, the plot can be obtained for each chromosome.
-The chromosome number needs to be selected using the `chromosome` parameter
-in the function.
 
-The AUC metrics calculated for the hidden states can also be displayed using
-the parameter `AUC`. The AUC values estimated using the `dmc_identification`
-function is passed as an input parameter to the function and the AUC metrics
-corresponding to the selected chromosome is displayed in the plot panels.
+The fitted density estimates, kernel density estimates, and the uncertainty in
+the hidden state assignment can be observed using the plot function for the 
+betaHMM output. Since the parameters are estimated individually for each 
+chromosome, one can generate plots for each chromosome separately. To specify
+the chromosome of interest, the user should utilize the `chromosome` parameter 
+within the function.
+
+Additionally, the AUC metrics calculated for the hidden states can also be 
+displayed using the `AUC` parameter. By providing the AUC values obtained 
+through the `dmc_identification` function as an input parameter, the plot will 
+depict the AUC metrics corresponding to the selected chromosome in the plot 
+panels.
 
 ```{r betaHMMplot,include=TRUE,echo=TRUE,fig.width=8,fig.height=5,dev='png'}
 AUC_chr <- AUC(dmc_out)
 plot(betaHMM_out, chromosome = "7", what = "fitted density", AUC = AUC_chr)
 ```
 
-The visualization of uncertainties in hidden state estimation is achieved
-through the utilization of a boxplot. Furthermore, users have the capability to
-provide the threshold of uncertainty, intended for DMC identification, as an
-input parameter to the plotting function. This facilitates the inclusion of the
-specified threshold alongside the visualization of uncertainties.
+
+The visualization of uncertainties in hidden state estimation is accomplished
+using a boxplot. Additionally, users have the option to input the threshold of
+uncertainty intended for DMC identification into the plotting function. This 
+allows for the incorporation of the specified threshold into the visualization
+of uncertainties.
 
 ```{r betaHMMplot2,include=TRUE,echo=TRUE,fig.width=6,fig.height=5,dev='png'}
 plot(betaHMM_out, chromosome = "7", what = "uncertainty",
@@ -242,14 +231,17 @@ plot(betaHMM_out, chromosome = "7", what = "uncertainty",
 
 ## DMR identification from DMCs identified
 
-The spatially correlated CpG sites result in a region of CpG sites having
-similar methylation states thus resulting in forming of biologically
-significant regions known as the differentially methylated region (DMR). A
-user-defined parameter `DMC_count` is used define the number of adjacent DMCs
-in a DMR. By default the value is set to 2. If no value is provided,
-the function identifies regions with adjacent 2 or more DMCs in a chromosome
-as a DMR. The DMR location information along with the DMCs in that DMR are
-provided as an S4 output of class `dmrResults`. The output can be accessed
+
+Spatially correlated CpG sites give rise to clusters of CpG sites with similar
+methylation states, leading to the formation of biologically significant 
+regions known as differentially methylated regions (DMRs). To define the number
+of adjacent DMCs required to identify a DMR, users can utilize the user-defined
+parameter `DMC_count`, which is set to a default value of 2. If no value is 
+specified, the function automatically identifies regions within a chromosome 
+containing two or more adjacent DMCs as DMRs.
+
+The DMR location information, along with the DMCs within each DMR, is presented
+as an S4 output of class `dmrResults`. Accessing this output can be achieved 
 using the S4 assay method.
 
 ```{r dmr,include=TRUE, echo=TRUE}
@@ -267,34 +259,39 @@ summary(dmr_out)
 
 ## Plot to visualise the DMCs and DMRs
 
-The S4 plot method can use the output from the `dmc_identification` function
-and plot the methylation values and the uncertainty in being identified as a
-DMC. The starting CpG site IlmnID needs to be provided as an input to the plot
-function. The parameter `end_CpG` can either have the IlmnID of the ending CpG
-site to be plotted or the number of CpG sites to be plotted excluding the
-starting CpG site.
+The S4 plot method has the capability to utilize the output generated by the
+`dmc_identification` function for plotting methylation values along with the
+uncertainty associated with being identified as a DMC. To create such plots,
+users must provide the starting CpG site's IlmnID as an input to the 
+`start_CpG` parameter. Additionally, the `end_CpG` parameter can either take
+the IlmnID of the ending CpG site to be plotted or the number of CpG sites 
+to be plotted, excluding the starting CpG site.
 
-We can see that the CpG site has a very low uncertainty of belonging to the
-hidden state identified as the most differentially methylated state but as it
-was below the threshold value used by the user, it was not selected as
-a DMC.
+It is worth noting that even though a CpG site may exhibit a very low 
+uncertainty in being associated with the hidden state identified as the most
+differentially methylated, it might not be selected as a DMC if it falls below
+the threshold value set by the user.
 
 ```{r dmrplot,include=TRUE,echo=TRUE,fig.width=7,fig.height = 5, dev = 'png'}
-p<-plot(dmc_out, start_CpG = "cg17750844", end_CpG = 15)
+plot(dmc_out, start_CpG = "cg17750844", end_CpG = 15)
 ```
 
-## Threshold identification in DNA samples from a treatment condition
+## Threshold identification in DNA samples belonging to a specific condition
 
-The initialization of the complex \eqn{K} hidden states betaHMM model for
-identifying hidden states that are differentially methylated between DNA samples
-collected from multiple biological conditions uses a simple 3 state betaHMM
-model for parameter estimation of a single treatment condition. These
-estimated parameters are then combined to form the \eqn{3^R} hidden states
-parameter model. The function used for estimating the 3 state betaHMM also
-objectively estimates the threshold methylation value between the 3 methylation
-states (hypomethylation, hemimethylation and hyprmethylation). This function can
-be executed individually to analyse the data distribution in DNA samples from
-a single biological condition.
+The initialization of the intricate \eqn{K} hidden states betaHMM model,
+aimed at identifying differentially methylated hidden states across DNA 
+samples collected from multiple biological conditions, begins with the 
+utilization of a simpler 3-state betaHMM model for parameter estimation 
+within a single treatment condition for identifying the 3 known methylation
+states (hypomethylation, hemimethylation and hypermethylation). Subsequently,
+these estimated parameters are amalgamated to construct the \eqn{3^R} hidden
+states parameter model.
+
+The function employed to estimate the 3-state betaHMM also provides an 
+objective estimation of the threshold methylation value distinguishing the 
+three methylation states. This function can be executed independently to
+analyze the data distribution within DNA samples originating from a single
+biological condition.
 
 ```{r threshold,include=TRUE, echo=TRUE}
 threshold_out <- threshold_identification(pca_methylation_data[,1:5],

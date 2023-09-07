@@ -41,7 +41,7 @@ RoxygenNote: 7.2.3
 biocViews: DNAMethylation, DifferentialMethylation, ImmunoOncology, 
            BiomedicalInformatics, MethylationArray, Software, 
            MultipleComparison, Sequencing, Spatial, Coverage, 
-           GeneTarget, HiddenMarkovModel
+           GeneTarget, HiddenMarkovModel, Microarray
 Suggests: 
     rmarkdown,
     knitr,

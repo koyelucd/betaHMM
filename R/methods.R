@@ -268,8 +268,8 @@ return(run)
 #' threshold,RangedSummarizedExperiment-method
 #' threshold,threshold_Results-method
 #' threshold,NULL-method
-#' @param object a \code{betaHMMResults} object or \code{dmcResults} object
-#' or \code{threshold_Results} object.
+#' @param object a \code{betaHMMResults}/ \code{dmcResults}/
+#' \code{threshold_Results} object.
 #' @return Output varies depending on the method.
 #' @export
 #' @example inst/examples/betaHMM_package.R

@@ -2,7 +2,7 @@
 % Please edit documentation in R/initialise_parameters.R
 \name{initialise_parameters}
 \alias{initialise_parameters}
-\title{Initialising the BHMM model parameters}
+\title{Initialising the betaHMM model parameters}
 \usage{
 initialise_parameters(data, M, N, R, seed = NULL)
 }
@@ -24,13 +24,13 @@ treatment group.}
 \value{
 A list containing:
 \itemize{
-\item A - The transition matrix for the BHMM model.
-\item tau - The initial distribution for the BHMM model.
+\item A - The transition matrix for the betaHMM model.
+\item tau - The initial distribution for the betaHMM model.
 \item phi - The shape parameters for the observation sequence data
-in the BHMM model.}
+in the betaHMM model.}
 }
 \description{
-Initialise the BHMM model parameters.
+Initialise the betaHMM model parameters.
 }
 \details{
 Computes the shape parameters using the threshold_function to

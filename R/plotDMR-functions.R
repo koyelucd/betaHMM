@@ -1,8 +1,5 @@
 globalVariables(c("Patient_Sample", "label", "M",
                     "beta_value", "name", "CP", "DMC", "group", "value"))
-#' Visualize the DMCs and DMRs identified
-#'
-#' Plot a \code{\link[betaHMM:dmcResults]{dmcResults}} object.
 #'
 #' @rdname plot
 #' @aliases
@@ -10,21 +7,26 @@ globalVariables(c("Patient_Sample", "label", "M",
 #' plot-methods
 #' plot,dmcResults-method
 #'
-#' @param x An object of class \code{\link[betaHMM:dmcResults]{dmcResults}}.
-#' @param start_CpG The IlmnID of starting CpG site.
+#' @param x An object of class
+#' \code{\link[betaHMM:betaHMMResults]{betaHMMResults}}/
+#' \code{\link[betaHMM:dmcResults]{dmcResults}}/
+#' \code{\link[betaHMM:dmcResults]{threshold_Results}} object.
+#' @param start_CpG The IlmnID of starting CpG site when plotting the DMCs.
 #' @param end_CpG The IlmnID of ending CpG site/ the total number
-#' of CpGs to be plotted excluing the starting CpG site.
-#' @param treatment_group The names of the different treatment groups to be
-#' displayed in the plot.
-#' If no value is passed then the treatment group names from the
-#' \code{betaHMM} function are used.
-#' @param N Number of replicates in each treatment group.
+#' of CpGs to be plotted excluing the starting CpG site when plotting the DMCs.
+#' @param treatment_group The names of the different treatment groups
+#' to be displayed in the plot.If no value is passed then the sample names
+#' estimated by the \code{betaHMM} function are used.
+#' @param N The number of DNA samples corresponding to each
+#' treatment group analysed using the betaHMM model. If `NULL`, the value from
+#' \code{betaHMMResults} object is selected.
 #' @param title The title that the user wants to display.
 #' If no title is to be displayed the default is 'NULL'.
 #' @param ... Other graphics parameters.
 #'
-#' @return This function displays the DMCs and DMRs plot from
+#' @return The function displays the  DMCs and DMRs plot from
 #' the \code{\link[betaHMM:dmcResults]{dmcResults}} object.
+#'
 #'
 #' @author Koyel Majumdar
 #'

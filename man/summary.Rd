@@ -64,7 +64,8 @@ plot(beta_out, chromosome = "1", what = "fitted density", AUC = AUC_chr)
 plot(dmc_out, start_CpG = "cg14817997", end_CpG = 8)
 }
 \seealso{
-\code{\link{betaHMM}}
+\code{\link{betaHMM}}, \code{\link{dmc_identification}},
+\code{\link{dmr_identification}}
 }
 \author{
 Koyel majumdar

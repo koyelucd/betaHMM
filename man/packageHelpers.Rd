@@ -206,8 +206,8 @@ threshold(object)
 \S4method{threshold}{`NULL`}(object)
 }
 \arguments{
-\item{object}{a \code{betaHMMResults} object or \code{dmcResults} object
-or \code{threshold_Results} object.}
+\item{object}{a \code{betaHMMResults}/ \code{dmcResults}/
+\code{threshold_Results} object.}
 }
 \value{
 Output varies depending on the method.

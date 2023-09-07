@@ -248,7 +248,7 @@ kernel_density_plot <- function(data, hidden_states, auc, C,
     f_labels <- data.frame(Cluster_full = levels(data_plot$Cluster_full),
                             label=as.vector(round((cluster_size[auc$State]/C),
                                                     3)), x = 0.8, y = y)
-    plot_graph <- plot_graph + geom_text(x = x, y = y, aes(label = label),
+    plot_graph <- plot_graph + geom_text( aes(x = x, y = y,label = label),
                                         data = f_labels)
     return(plot_graph)
 }

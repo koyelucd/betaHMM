@@ -1,7 +1,6 @@
 globalVariables(c("Patient_Sample", "label", "Uncertainty", "M", "beta_value"))
-#' Visualize results from betaHMM clustering
-#'
-#' Plot a \code{betaHMMResults} object.
+#' Visualize results from \code{betaHMM}/ \code{dmc_identification}/
+#' \code{threshold_identification} functions.
 #'
 #' @rdname plot
 #' @aliases
@@ -10,8 +9,11 @@ globalVariables(c("Patient_Sample", "label", "Uncertainty", "M", "beta_value"))
 #' plot,betaHMMResults-method
 #'
 #' @param x An object of class
-#' \code{\link[betaHMM:betaHMMResults]{betaHMMResults}} object.
-#' @param chromosome The chromosome number for which the plot is to be displayed
+#' \code{\link[betaHMM:betaHMMResults]{betaHMMResults}}/
+#' \code{\link[betaHMM:dmcResults]{dmcResults}}/
+#' \code{\link[betaHMM:dmcResults]{threshold_Results}} object.
+#' @param chromosome The chromosome number for which the plot is to be
+#' displayed.
 #' @param what The different plots that can be obtained are either
 #' 'fitted density','kernel density' or
 #' 'uncertainty' (default = 'fitted density').
@@ -25,7 +27,9 @@ globalVariables(c("Patient_Sample", "label", "Uncertainty", "M", "beta_value"))
 #' If no title is to be displayed the default is 'NULL'.
 #' @param ... Other graphics parameters.
 #'
-#' @return This function displays the following plots as requested by the user:
+#' @return This function displays the following plots as requested by the user
+#' when analysing the \code{\link[betaHMM:betaHMMResults]{betaHMMResults}}
+#' output:
 #' \itemize{
 #' \item fitted density estimates - Plot showing the fitted density estimates
 #' of the clustering solution under the optimal model selected.
@@ -34,7 +38,6 @@ globalVariables(c("Patient_Sample", "label", "Uncertainty", "M", "beta_value"))
 #' \item uncertainty -  A boxplot showing the uncertainties in the
 #' hidden state estimation.
 #' }
-#'
 #' @author Koyel Majumdar
 #'
 #' @export

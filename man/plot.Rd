@@ -7,7 +7,8 @@
 \alias{plot-methods}
 \alias{plot,dmcResults-method}
 \alias{plot,threshold_Results-method}
-\title{Visualize results from betaHMM clustering}
+\title{Visualize results from \code{betaHMM}/ \code{dmc_identification}/
+\code{threshold_identification} functions.}
 \usage{
 plot(x, ...)
 
@@ -35,38 +36,45 @@ plot(x, ...)
 \S4method{plot}{threshold_Results}(x, title = NULL, ...)
 }
 \arguments{
-\item{x}{An object of
-class \code{threshold_Results}}
+\item{x}{An object of class
+\code{\link[betaHMM:betaHMMResults]{betaHMMResults}}/
+\code{\link[betaHMM:dmcResults]{dmcResults}}/
+\code{\link[betaHMM:dmcResults]{threshold_Results}} object.}
 
-\item{...}{Extra plot parameters.}
+\item{...}{Other graphics parameters.}
 
-\item{chromosome}{The chromosome number for which the plot is to be displayed}
+\item{chromosome}{The chromosome number for which the plot is to be
+displayed.}
 
 \item{what}{The different plots that can be obtained are either
 'fitted density','kernel density' or
 'uncertainty' (default = 'fitted density').}
 
-\item{treatment_group}{The names of the different treatment groups to be
-displayed in the plot.
-If no value is passed then the treatment group names from the
-\code{betaHMM} function are used.}
+\item{treatment_group}{The names of the different treatment groups
+to be displayed in the plot.If no value is passed then the sample names
+estimated by the \code{betaHMM} function are used.}
 
 \item{AUC}{The AUC values for that chromosome.}
 
 \item{uncertainty_threshold}{The uncertainty threshold value used for DMC
 identification.}
 
-\item{title}{The title for the plot.}
+\item{title}{The title that the user wants to display.
+If no title is to be displayed the default is 'NULL'.}
 
-\item{start_CpG}{The IlmnID of starting CpG site.}
+\item{start_CpG}{The IlmnID of starting CpG site when plotting the DMCs.}
 
 \item{end_CpG}{The IlmnID of ending CpG site/ the total number
-of CpGs to be plotted excluing the starting CpG site.}
+of CpGs to be plotted excluing the starting CpG site when plotting the DMCs.}
 
-\item{N}{Number of replicates in each treatment group.}
+\item{N}{The number of DNA samples corresponding to each
+treatment group analysed using the betaHMM model. If `NULL`, the value from
+\code{betaHMMResults} object is selected.}
 }
 \value{
-This function displays the following plots as requested by the user:
+This function displays the following plots as requested by the user
+when analysing the \code{\link[betaHMM:betaHMMResults]{betaHMMResults}}
+output:
 \itemize{
 \item fitted density estimates - Plot showing the fitted density estimates
 of the clustering solution under the optimal model selected.
@@ -76,25 +84,16 @@ of the clustering solution under the optimal model selected.
 hidden state estimation.
 }
 
-This function displays the DMCs and DMRs plot from
+The function displays the  DMCs and DMRs plot from
 the \code{\link[betaHMM:dmcResults]{dmcResults}} object.
 
-The plot for the estimated shape parameters and threshold
-for the methylation states in a single DNA treatment condition.
+The function displays the plot for the estimated shape parameters
+and threshold for the methylation states in a single DNA treatment condition
+from the \code{\link[betaHMM:threshold_Results]{threshold_Results}} object.
 }
 \description{
-Plot a \code{betaHMMResults} object.
-
-Plot a \code{\link[betaHMM:dmcResults]{dmcResults}} object.
-
-The plot for threshold identification in a single
-DNA treatment condition.
-}
-\details{
-Visualize the 3 methylation states in DNA replicates collected from
-one condition
-
-Plot a \code{threshold_Results} object.
+Visualize results from \code{betaHMM}/ \code{dmc_identification}/
+\code{threshold_identification} functions.
 }
 \examples{
 ## Use simulated data for the betaHMM workflow example

@@ -1,7 +1,3 @@
-#' Visualize the 3 methylation states in DNA replicates collected from
-#' one condition
-#'
-#' Plot a \code{threshold_Results} object.
 #'
 #' @rdname plot
 #' @aliases
@@ -9,17 +5,18 @@
 #' plot-methods
 #' plot,threshold_Results-method
 #'
-#' @title The plot for threshold identification in a single
-#' DNA treatment condition.
-#' @description The plot for threshold identification in a single
-#' DNA treatment condition.
 #' @export
-#' @param x An object of
-#' class \code{threshold_Results}
-#' @param title The title for the plot.
-#' @param ... Extra plot parameters.
-#' @return The plot for the estimated shape parameters and threshold
-#' for the methylation states in a single DNA treatment condition.
+#' @param x An object of class
+#' \code{\link[betaHMM:betaHMMResults]{betaHMMResults}}/
+#' \code{\link[betaHMM:dmcResults]{dmcResults}}/
+#' \code{\link[betaHMM:dmcResults]{threshold_Results}} object.
+#' @param title The title that the user wants to display.
+#' If no title is to be displayed the default is 'NULL'.
+#' @param ... Other graphics parameters.
+#' @return The function displays the plot for the estimated shape parameters
+#' and threshold for the methylation states in a single DNA treatment condition
+#' from the \code{\link[betaHMM:threshold_Results]{threshold_Results}} object.
+#'
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom scales seq_gradient_pal
 setMethod(f = "plot", signature(x = "threshold_Results"),

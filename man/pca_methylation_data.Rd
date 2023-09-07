@@ -5,7 +5,7 @@
 \alias{pca_methylation_data}
 \title{Simulated DNA methylation data}
 \format{
-A data frame with 100 rows and 9 columns. The data contain no
+A data frame with 38672 rows and 9 columns. The data contain no
 missing values.
 \itemize{
 \item{IlmnID: The unique identifier from the Illumina CG database,
@@ -35,9 +35,10 @@ A data frame containing a subset of methylation data
 from real study.
 }
 \description{
-A dataset containing beta methylation values from
+A subset of the dataset containing beta methylation values from
 \eqn{R=2} sample types (Benign and Tumour), collected from \eqn{N=4}
-patients from the a prostate cancer study.
+patients from the a prostate cancer study. The dataset contains methylation
+values corresponding to chromosome 7.
 }
 \details{
 The array data were then normalized and and probes located outside
@@ -45,7 +46,7 @@ of CpG sites and on the sex chromosome were filtered out. The CpG sites with
 missing values were removed from the resulting dataset. A subset of the
 complete dataset has been uploaded in the package for testing purposes.
 The complete dataset is available on
-\href{https://github.com/koyelucd/betaHMM}{GitHub}.
+\href{https://github.com/koyelucd/betaclust}{GitHub}.
 }
 \seealso{
 \code{\link{annotation_data}}

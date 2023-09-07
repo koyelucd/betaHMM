@@ -21,7 +21,8 @@ a matrix or dataframe.}
 
 \item{package_workflow}{Flag set to TRUE if method called from package
 workflow.
-If set to FALSE then the parameter annotation_file needs to be supplied.}
+If set to FALSE then the parameter annotation_file needs to be supplied to
+the function.}
 
 \item{annotation_file}{A dataframe containing the EPIC methylation
 annotation file.}

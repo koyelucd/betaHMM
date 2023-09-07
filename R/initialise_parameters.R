@@ -1,5 +1,5 @@
-#' @title Initialising the BHMM model parameters
-#' @description Initialise the BHMM model parameters.
+#' @title Initialising the betaHMM model parameters
+#' @description Initialise the betaHMM model parameters.
 #' @details Computes the shape parameters using the threshold_function to
 #' initialise the shape parameters of the model.
 #' @keywords internal
@@ -14,10 +14,10 @@
 #' @param seed Seed to allow for reproducibility (default = NULL).
 #' @return A list containing:
 #' \itemize{
-#' \item A - The transition matrix for the BHMM model.
-#' \item tau - The initial distribution for the BHMM model.
+#' \item A - The transition matrix for the betaHMM model.
+#' \item tau - The initial distribution for the betaHMM model.
 #' \item phi - The shape parameters for the observation sequence data
-#' in the BHMM model.}
+#' in the betaHMM model.}
 #' @importFrom stats kmeans
 #' @importFrom stats sd
 

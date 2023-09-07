@@ -15,7 +15,8 @@
 #' \code{'dmcResults'} or \code{'dmrResults'}.
 #' @param ... Additional arguments
 #' @author Koyel majumdar
-#' @seealso \code{\link{betaHMM}}
+#' @seealso \code{\link{betaHMM}}, \code{\link{dmc_identification}},
+#' \code{\link{dmr_identification}}
 #' @example inst/examples/betaHMM_package.R
 #' @return Summary of the \code{'betaHMMResults'} or
 #' \code{'dmcResults'} or \code{'dmrResults'} object.

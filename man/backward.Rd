@@ -8,7 +8,7 @@ backward(probabilities, trained_params)
 }
 \arguments{
 \item{probabilities}{A matrix containing the marginal probability
-distribution of the \eqn{K} states within the Markov model.}
+distribution of the \eqn{K} hidden states within the Markov model.}
 
 \item{trained_params}{A list containing the initialised shape parameters for
 the betaHMM model (initial distribution, transition matrix, shape parameters
@@ -17,9 +17,9 @@ for the observed data).}
 \value{
 A list containing:
 \itemize{
-\item log_beta - A \eqn{C*K} matrix (where \eqn{C} is the number of CpG
-sites and \eqn{K} is the number of hidden states) containing the
-logarithmized backward probabilities.
+\item log_beta - A matrix of dimension \eqn{C*K} (where \eqn{C} is the
+number of CpG sites and \eqn{K} is the number of hidden states) containing
+the logarithmized backward probabilities.
 \item scaled_logL - The log-likelihood calculated using the backward
 probabilities.
 }
