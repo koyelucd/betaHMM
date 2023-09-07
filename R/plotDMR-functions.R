@@ -57,9 +57,9 @@ dmcGlobalplots<-function(x,start_CpG=NULL,end_CpG=NULL,treatment_group=NULL,
                             N = NULL, title = NULL, ...) {
     if (is.null(start_CpG)) stop("start_CpG cannot be empty.")
     if (is.null(end_CpG)) stop("end_CpG cannot be empty.")
+    object <- x; dmc_df <- as.data.frame(assay(object))
     if (is.numeric(end_CpG)) {start_index <- which(dmc_df$IlmnID == start_CpG)
         new_index<-start_index+end_CpG; end_CpG<-dmc_df[new_index, "IlmnID"]}
-    object <- x; dmc_df <- as.data.frame(assay(object))
     if (dmc_df[dmc_df$IlmnID == start_CpG, "CHR"] !=
         dmc_df[dmc_df$IlmnID == end_CpG, "CHR"])
         stop("Start and End CpGs cannot be from different Chromosomes.")
