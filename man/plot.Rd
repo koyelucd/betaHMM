@@ -33,7 +33,7 @@ plot(x, ...)
   ...
 )
 
-\S4method{plot}{threshold_Results}(x, title = NULL, ...)
+\S4method{plot}{threshold_Results}(x, plot_threshold = TRUE, title = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class
@@ -70,6 +70,9 @@ of CpGs to be plotted excluing the starting CpG site when plotting the DMCs.}
 \item{N}{The number of DNA samples corresponding to each
 treatment group analysed using the betaHMM model. If `NULL`, the value from
 \code{betaHMMResults} object is selected.}
+
+\item{plot_threshold}{The "TRUE" option displays the threshold points in the
+graph for the 3 state betaHMM model (default = "FALSE").}
 }
 \value{
 This function displays the following plots as requested by the user
@@ -112,7 +115,7 @@ beta_out <- betaHMM(sample_methylation_file[1:50,], sample_annotation_file[1:50,
 dmc_out <- dmc_identification(beta_out)
 
 # Run dmr_identification function
-#dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
+dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
 
 # Plot functions
 # Get the AUC values calculated for each hidden state
@@ -137,7 +140,7 @@ beta_out <- betaHMM(sample_methylation_file[1:50,], sample_annotation_file[1:50,
 dmc_out <- dmc_identification(beta_out)
 
 # Run dmr_identification function
-#dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
+dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
 
 # Plot functions
 # Get the AUC values calculated for each hidden state

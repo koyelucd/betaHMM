@@ -73,7 +73,7 @@ beta_out <- betaHMM(sample_methylation_file[1:50,], sample_annotation_file[1:50,
 dmc_out <- dmc_identification(beta_out)
 
 # Run dmr_identification function
-#dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
+dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
 
 # Plot functions
 # Get the AUC values calculated for each hidden state
