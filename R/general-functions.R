@@ -72,7 +72,9 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
             the 3 methylation states. ")
     } else if (R < 2) { stop("R cannot be < 2 to identify DMCs between
     2 or more conditions.") } else if (any(N < 1)) { stop("N cannot be
-    less than 1 as one or more DNA replicates need to be analysed.")}
+    less than 1 as one or more DNA replicates need to be analysed.")
+    } else if (M!=round(M)|N!=round(N)|R!=round(R)){
+            stop("M, N and R has to be whole numbers.")}
     if (is.null(treatment_group)) {treatment_group <-
         vapply(seq(1, R), function(x) { paste0("Sample ", x)}, character(1))
     } else if (length(treatment_group) > R) {

@@ -43,6 +43,13 @@ initialize_parameters_th <- function(data, M, N, R, seed = NULL) {
 }
 
 BaumWelch_th <- function(data, M = 3, N, R, n.iter = 100, seed = NULL) {
+    if (M != 3) {
+        stop("M cannot be more or less than 3 as this function tries to
+             identify the threshold between the 3 methylation states. ")
+    } else if (any(N < 1)) { stop("N cannot be
+    less than 1 as one or more DNA replicates need to be analysed.")
+    } else if (M!=round(M)|N!=round(N)){
+        stop("M and N has to be whole numbers.")}
     K <- M
     C <- nrow(data)
     trained_params <- initialize_parameters_th(data, M, N, R, seed)
