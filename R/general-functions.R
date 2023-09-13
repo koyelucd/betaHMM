@@ -56,7 +56,9 @@ globalVariables(c("betaHMMresults", "CHR", "IlmnID", "MAPINFO", "chr",
 #' @importClassesFrom S4Vectors DataFrame
 #' @importMethodsFrom S4Vectors metadata
 #' @importFrom stats complete.cases
-#' @importFrom foreach %dopar%
+#' @importFrom foreach foreach %dopar%
+#' @importFrom parallel makeCluster detectCores stopCluster
+#' @importFrom doParallel registerDoParallel
 #' @example inst/examples/betaHMM_package.R
 #'
 #'
@@ -115,9 +117,9 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
     sorted_data <- as.data.frame(sorted_data)
     chr_unique <- unique(sorted_data$CHR)
     chr_unique <- as.character(sort(as.numeric(chr_unique)))
-    ncores <- ifelse(parallel_process == FALSE, 2L, parallel::detectCores())
-    my.cluster <- parallel::makeCluster(ncores - 1)
-    doParallel::registerDoParallel(cl = my.cluster)
+    ncores <- ifelse(parallel_process == FALSE, 2L, detectCores())
+    my.cluster <- makeCluster(ncores - 1)
+    registerDoParallel(cl = my.cluster)
     `%dopar%` <- foreach::`%dopar%`; `%do%` <- foreach::`%do%`
     betaHMM_workflow <- function(data_chr, K, M, N, R, chr, seed = NULL,
                                     iterations=100) {
@@ -135,14 +137,14 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
                 llk=out_baumwelch$log_vec,hiddenStates=out_viterbi,chr=chr))}
     comb <- function(x, ...) {lapply(seq_along(x),
                 function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))}
-    beta_chr_out <- foreach::foreach(chr = seq(1, length(chr_unique)),
+    beta_chr_out <- foreach(chr = seq(1, length(chr_unique)),
                                     .combine = "comb", .multicombine = TRUE,
                                     .init = list(list(), list(), list(),
                                                 list(), list(), list(),
                                                 list(), list())) %dopar%
     betaHMM_workflow(sorted_data[sorted_data$CHR == chr_unique[chr], ],
                     K, M, N, R, chr_unique[chr],seed,iterations)
-    parallel::stopCluster(cl = my.cluster)
+    stopCluster(cl = my.cluster)
     z_final_out <- as.data.frame(do.call(rbind, beta_chr_out[[5]]))
     chromosome_number <- unlist(beta_chr_out[[8]])
     chromosome_number_list <- paste("chr", chromosome_number)
@@ -289,15 +291,17 @@ dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
 #' The object also returns the chromosomes analysed by the betaHMM model as
 #' the metadata.
 #' @importFrom stats complete.cases
-#' @importFrom foreach %dopar%
+#' @importFrom foreach foreach %dopar%
+#' @importFrom parallel detectCores makeCluster stopCluster
+#' @importFrom doParallel registerDoParallel
 #' @example inst/examples/betaHMM_package.R
 
 dmr_identification_run <- function(dmc_identification_object, DMC_count = 2,
                                     parallel_process = FALSE, ...) {
     dmc_df <- dmc_identification_object; chr_unique <- unique(dmc_df$CHR)
-    ncores <- ifelse(parallel_process == FALSE, 2L, parallel::detectCores())
-    my.cluster <- parallel::makeCluster(ncores - 1)
-    doParallel::registerDoParallel(cl = my.cluster)
+    ncores <- ifelse(parallel_process == FALSE, 2L, detectCores())
+    my.cluster <- makeCluster(ncores - 1)
+    registerDoParallel(cl = my.cluster)
     `%dopar%` <- foreach::`%dopar%`;`%do%` <- foreach::`%do%`
     dmr_parallel <- function(dmc_df_chr, DMC_count) {
         block_counter<-0; block_start <- 0; block_end <- 0; block_length <- 0
@@ -332,11 +336,11 @@ dmr_identification_run <- function(dmc_identification_object, DMC_count = 2,
                             dmc_df_chr$CHR == df_unique[j, 4])
             x <- dmc_df_chr[start:end, "IlmnID"]
             df_unique[j,"DMCs"]<-paste(x,collapse=",")}; return(df_unique)}
-    dmr_mat <- foreach::foreach(chr = seq(1, length(chr_unique)),
+    dmr_mat <- foreach(chr = seq(1, length(chr_unique)),
                                 .combine = rbind) %dopar%
         dmr_parallel(dmc_df[dmc_df$CHR == chr_unique[chr],], DMC_count)
-    parallel::stopCluster(cl = my.cluster)
-    dmr_df <- dmr_mat[stats::complete.cases(dmr_mat), ]
+    stopCluster(cl = my.cluster)
+    dmr_df <- dmr_mat[complete.cases(dmr_mat), ]
     rownames(dmr_df) <- dmr_df$start_CpG
     select.results <- SummarizedExperiment(assays = dmr_df,
                         metadata = list(chromosome_number =chr_unique))

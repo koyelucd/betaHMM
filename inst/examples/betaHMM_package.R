@@ -21,6 +21,6 @@ dmr_out <- dmr_identification(dmc_out, parallel_process = FALSE)
 # Get the AUC values calculated for each hidden state
 AUC_chr <- AUC(dmc_out)
 
-## plot the fitted density estimates
+## plot the uncertainty for each hidden state
 plot(beta_out, chromosome = "1", what = "uncertainty")
 

@@ -1,6 +1,8 @@
 globalVariables(c("x", "Cluster"))
 #' @keywords internal
 #' @import ggplot2
+#' @importFrom stats kmeans sd dbeta density
+#' @importFrom scales seq_gradient_pal
 
 initialize_parameters_th <- function(data, M, N, R, seed = NULL) {
     K <- M
@@ -11,7 +13,7 @@ initialize_parameters_th <- function(data, M, N, R, seed = NULL) {
         data[, i] <- as.numeric(data[, i])
     }
     data <- as.matrix(data)
-    k_cluster <- stats::kmeans(data, M)
+    k_cluster <- kmeans(data, M)
     mem <- k_cluster$cluster
     data_clust <- cbind(data, mem)
     x <- as.matrix(data_clust)
@@ -20,7 +22,6 @@ initialize_parameters_th <- function(data, M, N, R, seed = NULL) {
     x <- x[, -ncol(x)]
     C <- nrow(x)
     N <- ncol(x)
-    ## initial model parameters
     mu <- vector("numeric", K)
     sigma <- vector("numeric", K)
     sigma_sq <- vector("numeric", K)
@@ -29,7 +30,7 @@ initialize_parameters_th <- function(data, M, N, R, seed = NULL) {
     term <- vector("numeric", K)
     for (k in seq(1, K)) {
         mu[k] <- mean(x[mem == k, ])
-        sigma[k] <- stats::sd(x[mem == k, ])
+        sigma[k] <- sd(x[mem == k, ])
         term[k] <- (mu[k] * (1 - mu[k])/(sigma[k]^2)) - 1
         alpha[k] <- mu[k] * term[k]
         beta[k] <- (1 - mu[k]) * term[k]
@@ -169,11 +170,11 @@ Viterbi_th <- function(data, M = 3, N = 4, R = 1, tau, A, phi) {
 
 threshold_values <- function(data, tau, phi) {
     threshold_func_low <- function(data_x, alpha, delta, tau, i) {
-        num <- tau[i] * stats::dbeta(data_x, alpha[i], delta[i])
+        num <- tau[i] * dbeta(data_x, alpha[i], delta[i])
         deno <- 0
         for (j in seq(1, length(alpha))) {
             if (j != i) {
-                deno <- deno + (tau[j] * stats::dbeta(data_x,
+                deno <- deno + (tau[j] * dbeta(data_x,
                                                         alpha[j], delta[j]))
             }
         }
@@ -183,7 +184,7 @@ threshold_values <- function(data, tau, phi) {
         return(l)
     }
     threshold_func_upper <- function(data_x, alpha, delta, tau, i) {
-        num <- tau[i] * stats::dbeta(data_x, alpha[i], delta[i])
+        num <- tau[i] * dbeta(data_x, alpha[i], delta[i])
         deno <- 0
         for (j in seq(1, length(alpha))) {
             if (j != i) {
@@ -237,7 +238,7 @@ kernel_density_plot <- function(data, hidden_states, auc, C,
     data_plot$Cluster_full <- as.factor(data_plot$Cluster)
     levels(data_plot$Cluster_full) <- auc$label
     color_length <- col_len - 1
-    colours <- (scales::seq_gradient_pal(low = "#FFC20A", high = "#0C7BDC",
+    colours <- (seq_gradient_pal(low = "#FFC20A", high = "#0C7BDC",
                                         space = "Lab"))(seq(1, color_length)/
                                                             color_length)
     plot_graph <- ggplot(data_plot) + geom_density(aes(x = beta_value,
@@ -251,7 +252,7 @@ kernel_density_plot <- function(data, hidden_states, auc, C,
     cluster_size <- table(hidden_states)
     y <- vector()
     for (i in auc$State) {
-        y[i]<-max(stats::density(data_plot[data_plot$Cluster==i,1])[["y"]])}
+        y[i]<-max(density(data_plot[data_plot$Cluster==i,1])[["y"]])}
     f_labels <- data.frame(Cluster_full = levels(data_plot$Cluster_full),
                             label=as.vector(round((cluster_size[auc$State]/C),
                                                     3)), x = 0.8, y = y)
@@ -271,7 +272,7 @@ fitted_density_plot <- function(phi, hidden_states, auc, R, K, C,
     for (i in seq(1, R)) {
         for (j in seq(1, K)) {
             tmp_vec <- vapply(vec_x, function(x) {
-                tau[j]*(stats::dbeta(x,alpha[j,i],delta[j, i]))}, numeric(1))
+                tau[j]*(dbeta(x,alpha[j,i],delta[j, i]))}, numeric(1))
             beta_vec <- c(beta_vec, vec_x)
             density_vec <- c(density_vec, tmp_vec)
             cluster_vec <- c(cluster_vec, rep(j, times = length(tmp_vec)))
@@ -283,7 +284,7 @@ fitted_density_plot <- function(phi, hidden_states, auc, R, K, C,
     df_new_tmp$Cluster_full <- as.factor(df_new_tmp$cluster_vec)
     levels(df_new_tmp$Cluster_full) <- auc$label
     color_length <- R
-    colours <- (scales::seq_gradient_pal(low = "#FFC20A", high = "#0C7BDC",
+    colours <- (seq_gradient_pal(low = "#FFC20A", high = "#0C7BDC",
                                         space = "Lab"))(seq(1, color_length)/
                                                             color_length)
     cluster_size <- table(hidden_states)

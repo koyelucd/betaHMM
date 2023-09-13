@@ -33,16 +33,14 @@ AUC_DM_analysis <- function(M, N, R, K, tau, A, phi) {
         vec_count <- 1
         for (i in seq(1, (R - 1))) {
             for (k in (i + 1):R) {
-                group_1 <- stats::rbeta(n, shape1 = shape_1[i],
-                                        shape2 = shape_2[i])
-                group_2 <- stats::rbeta(n, shape1 = shape_1[k],
-                                        shape2 = shape_2[k])
+                group_1 <- rbeta(n, shape1 = shape_1[i], shape2 = shape_2[i])
+                group_2 <- rbeta(n, shape1 = shape_1[k], shape2 = shape_2[k])
                 auc_dat <- data.frame(predictor = c(group_1, group_2),
                                         response = factor(c(rep(0, n),
                                                             rep(1, n))))
-                auc_value <- pROC::auc(predictor = auc_dat$predictor,
-                                        response = auc_dat$response,
-                                        quiet = TRUE)
+                auc_value <- auc(predictor = auc_dat$predictor,
+                                    response = auc_dat$response,
+                                    quiet = TRUE)
                 auc_vec[vec_count] <- unlist(auc_value)
                 vec_count <- vec_count + 1
             }

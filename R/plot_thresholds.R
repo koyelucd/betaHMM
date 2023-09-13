@@ -21,6 +21,7 @@
 #'
 #' @importFrom ggplot2 ggplot aes
 #' @importFrom scales seq_gradient_pal
+#' @importFrom stats dbeta
 setMethod(f = "plot", signature(x = "threshold_Results"),
             definition = function(x, plot_threshold=TRUE,title = NULL, ...) {
     # x <- object
@@ -46,7 +47,7 @@ thresholdGlobalplots <- function(x, plot_threshold=TRUE,title = NULL, ...) {
     for (i in seq(1, K)) {
         beta_value <- data_x
         Cluster <- rep(i, length(data_x))
-        density <- prop[i] * stats::dbeta(data_x, alpha[i], delta[i])
+        density <- prop[i] * dbeta(data_x, alpha[i], delta[i])
         temp <- cbind(beta_value, density, Cluster)
         data_th_plot <- rbind(data_th_plot, temp)  }
     data_th_plot <- as.data.frame(data_th_plot)

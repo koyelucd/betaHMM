@@ -31,7 +31,7 @@ Viterbi <- function(data, M, N, R, tau, A, phi) {
         for (n in n1:n2) {
             probabilities[[n]] <- matrix(data[, n], ncol = K, nrow=nrow(data))
             probabilities[[n]] <- t(apply(X = probabilities[[n]], MARGIN = 1,
-                                            FUN = stats::dbeta,
+                                            FUN = dbeta,
                                             shape1 = phi$sp_1[r, ],
                                             shape2 = phi$sp_2[r, ]))
         }

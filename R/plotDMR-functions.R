@@ -93,7 +93,7 @@ dmcGlobalplots<-function(x,start_CpG=NULL,end_CpG=NULL,treatment_group=NULL,
         scale_fill_gradient(low = "black", high = "white",name="Uncertainty")+
         guides(shape = "none") + labs(x = NULL, y = NULL) +
         theme(legend.position = "top", legend.justification = "right")
-    g2b<-ggplot(long_dat,aes(x=factor(MAPINFO),y=value,color=group,
+    g2<-ggplot(long_dat,aes(x=factor(MAPINFO),y=value,color=group,
                                 group = name)) + geom_line() + theme_void() +
         ylab("beta value") +
         scale_x_discrete(labels = paste0(unique(long_dat$IlmnID), " ")) +
@@ -101,7 +101,7 @@ dmcGlobalplots<-function(x,start_CpG=NULL,end_CpG=NULL,treatment_group=NULL,
         strip.text.x = element_blank(), axis.text.y = element_blank(),
         axis.title.y=element_text(angle=90),axis.text.x=element_text(angle=90,
     hjust=.95,vjust=.2),legend.title=element_blank(),legend.position="bottom")
-    plotG<-plot_grid(g1,g2b,ncol=1,rel_heights=c(0.3,0.7),align="v",axis="l")
+    plotG<-plot_grid(g1,g2,ncol=1,rel_heights=c(0.3,0.7),align="v",axis="l")
     return(plotG)}
 
 
