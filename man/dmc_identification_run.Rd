@@ -37,7 +37,8 @@ following values:
 The object contains the following values as the metadata:
 \itemize{
 \item A list containing the AUC values for K hidden states for each
-chromosome.
+chromosome and the conditions compared which resulted in the highest AUC
+value when more than 2 conditions are compared.
 \item A list containing the conditional probability values for K hidden
 states for each chromosome.
 \item The treatment group labels.

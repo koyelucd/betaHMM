@@ -26,7 +26,8 @@ treatment group.}
 estimated hidden states in the betaHMM model.}
 }
 \value{
-A dataframe returning the hidden state and the AUC value calculated
+A dataframe returning the hidden state, the AUC value and the
+distributions which resulted in highest AUC value calculated
 for the corresponding hidden state.
 }
 \description{

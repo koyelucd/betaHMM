@@ -84,6 +84,7 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
             entered.")}
     meth_data <- methylation_data
     anno_file <- annotation_file
+    meth_data <- meth_data[complete.cases(meth_data), ]
     final_subset <- subset(meth_data, select = -IlmnID)
     row <- nrow(final_subset);col <- ncol(final_subset)
     numeric_vec <- as.numeric(as.matrix(final_subset))
@@ -111,7 +112,6 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
         n <- R - length(N)
         N <- c(N, rep(N[1], n))}
     complete_data <- data
-    complete_data <- complete_data[complete.cases(complete_data), ]
     sorted_data <- complete_data[order(as.numeric(complete_data$CHR),
                                         complete_data$MAPINFO), ]
     sorted_data <- as.data.frame(sorted_data)
@@ -203,7 +203,8 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
 #' The object contains the following values as the metadata:
 #' \itemize{
 #' \item A list containing the AUC values for K hidden states for each
-#' chromosome.
+#' chromosome and the conditions compared which resulted in the highest AUC
+#' value when more than 2 conditions are compared.
 #' \item A list containing the conditional probability values for K hidden
 #' states for each chromosome.
 #' \item The treatment group labels.
@@ -240,12 +241,12 @@ dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
         phi_chr<-list(); phi_chr[["sp_1"]]<-phi[[1]][[i]]
         phi_chr[["sp_2"]]<-phi[[2]][[i]]
         auc_df <- AUC_DM_analysis(M, N, R, K, tau[[i]], A[[i]], phi_chr)
-        x <- as.data.frame(t(auc_df)); colnames(x) <- c("State", "AUC")
+        x<-as.data.frame(t(auc_df))
+        colnames(x)<-c("State","AUC","DM_Conditions")
         x$AUC <- as.numeric(x$AUC); auc_list[[i]] <- x
         x_co <- x[x$AUC >= AUC_threshold[i], ]; diff_meth_x <- x_co$State
         df_chr <- df[df$CHR == chr_unique[i], ]
-        if (nrow(x_co) != 0) {
-            hs <- hidden_states(object)[[i]]
+        if (nrow(x_co) != 0) { hs <- hidden_states(object)[[i]]
             df_chr$hidden_state <- hs
             z_mat <- z[row.names(z) %in% df_chr$IlmnID, ]
             if (length(diff_meth_x) > 1) {
@@ -327,7 +328,7 @@ dmr_identification_run <- function(dmc_identification_object, DMC_count = 2,
         dmc_df_chr[dmc_df_chr$IlmnID == x, "MAPINFO"]}, numeric(1))
         map_end <- vapply(df_unique$end_CpG, function(x) {
         dmc_df_chr[dmc_df_chr$IlmnID == x, "MAPINFO"]}, numeric(1))
-        df_unique$CHR <- unique(dmc_df_chr$CHR)
+        if(nrow(df_unique)!=0){df_unique$CHR <- unique(dmc_df_chr$CHR)
         df_unique$map_start <- map_start; df_unique$map_end <- map_end
         for (j in seq(1, nrow(df_unique))) {
             start <- which(dmc_df_chr$MAPINFO == df_unique[j, 5] &
@@ -335,7 +336,7 @@ dmr_identification_run <- function(dmc_identification_object, DMC_count = 2,
             end <- which(dmc_df_chr$MAPINFO == df_unique[j, 6] &
                             dmc_df_chr$CHR == df_unique[j, 4])
             x <- dmc_df_chr[start:end, "IlmnID"]
-            df_unique[j,"DMCs"]<-paste(x,collapse=",")}; return(df_unique)}
+            df_unique[j,"DMCs"]<-paste(x,collapse=",")}}; return(df_unique)}
     dmr_mat <- foreach(chr = seq(1, length(chr_unique)),
                                 .combine = rbind) %dopar%
         dmr_parallel(dmc_df[dmc_df$CHR == chr_unique[chr],], DMC_count)
