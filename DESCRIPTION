@@ -2,7 +2,7 @@ Package: betaHMM
 Type: Package
 Title: A Hidden Markov Model Approach for Identifying Differentially Methylated 
        Sites and Regions for Beta-Valued DNA Methylation Data
-Version: 0.99.2
+Version: 0.99.3
 Authors@R: c(person("Koyel","Majumdar",email="koyel.majumdar@ucdconnect.ie",
         role=c("cre","aut"),comment = c(ORCID = "0000-0001-6469-488X")),
         person("Romina","Silva",
