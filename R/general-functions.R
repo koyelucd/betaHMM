@@ -63,20 +63,20 @@ globalVariables(c("betaHMMresults", "CHR", "IlmnID", "MAPINFO", "chr",
 #'
 #'
 betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
-                        treatment_group = NULL, parallel_process = FALSE,
-                        seed = NULL,iterations=100, ...) {
+                       treatment_group = NULL, parallel_process = FALSE,
+                       seed = NULL,iterations=100, ...) {
     if (is.null(methylation_data)) {
         stop("Please provide a dataframe containing methylation values.")
     } else if (is.null(annotation_file)) {
         stop("Please provide a dataframe containing
             annotation for EPIC array.")} else if (M > 3 | M < 2) {
-        stop("M cannot be more than 3 or less than 2 as a CpG can be any of
-            the 3 methylation states. ")
-    } else if (R < 2) { stop("R cannot be < 2 to identify DMCs between
+                stop("M cannot be more than 3 or less than 2 as a CpG
+                can be any of the 3 methylation states. ")
+            } else if (R < 2) { stop("R cannot be < 2 to identify DMCs between
     2 or more conditions.") } else if (any(N < 1)) { stop("N cannot be
     less than 1 as one or more DNA replicates need to be analysed.")
     } else if (M!=round(M)|N!=round(N)|R!=round(R)){
-            stop("M, N and R has to be whole numbers.")}
+        stop("M, N and R has to be whole numbers.")}
     if (is.null(treatment_group)) {treatment_group <-
         vapply(seq(1, R), function(x) { paste0("Sample ", x)}, character(1))
     } else if (length(treatment_group) > R) {
@@ -84,92 +84,82 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
             entered.")}
     meth_data <- methylation_data
     anno_file <- annotation_file
-    meth_data <- meth_data[complete.cases(meth_data), ]
-    final_subset <- subset(meth_data, select = -IlmnID)
-    row <- nrow(final_subset);col <- ncol(final_subset)
-    numeric_vec <- as.numeric(as.matrix(final_subset))
-    final_subset <- matrix(numeric_vec, ncol = col)
-    if (abs(max(final_subset) - 1) < 1e-06) {
-        max_f <- max(final_subset[final_subset != max(final_subset)])
-    } else { max_f <- max(final_subset) }
-    if (abs(min(final_subset) - 0) < 1e-06) {
-        min_f <- min(final_subset[final_subset != min(final_subset)])
-    } else { min_f <- min(final_subset)}
-    final_subset[final_subset > max_f] <- max_f
-    final_subset[final_subset < min_f] <- min_f
-    cols <- which(colnames(meth_data) != "IlmnID")
-    meth_data[, cols] <- final_subset
-    meth_data <- as.data.frame(meth_data)
-    data<-merge(meth_data,anno_file[,c("IlmnID","CHR","MAPINFO")],by="IlmnID")
-    col_order <- which(colnames(data) == "IlmnID" | colnames(data) == "CHR" |
-                        colnames(data) == "MAPINFO")
-    col_order2 <- which(colnames(data) != "IlmnID" & colnames(data) != "CHR" &
-                        colnames(data) != "MAPINFO")
-    data <- data[, c(col_order, col_order2)]; K <- M^R ; C <- nrow(data)
+    meth_data <- meth_data[complete.cases(meth_data), , drop=FALSE]
+    data<-beta_value_numeric(meth_data,anno_file)
+    data<-as.data.frame(data)
+    K <- M^R
+    C <- nrow(data)
     is.scalar <- function(x) is.atomic(x) && length(x) == 1L && Im(x) == 0
     if (is.scalar(N)) {
         N <- rep(N, R)} else if (length(N) < R) {
-        n <- R - length(N)
-        N <- c(N, rep(N[1], n))}
+            n <- R - length(N)
+            N <- c(N, rep(N[1], n))}
     complete_data <- data
     sorted_data <- complete_data[order(as.numeric(complete_data$CHR),
-                                        complete_data$MAPINFO), ]
+                                       complete_data$MAPINFO), ]
     sorted_data <- as.data.frame(sorted_data)
     chr_unique <- unique(sorted_data$CHR)
     chr_unique <- as.character(sort(as.numeric(chr_unique)))
-    ncores <- ifelse(parallel_process == FALSE, 2L, detectCores())
-    my.cluster <- makeCluster(ncores - 1)
-    registerDoParallel(cl = my.cluster)
-    `%dopar%` <- foreach::`%dopar%`; `%do%` <- foreach::`%do%`
+    ncores_bh <- ifelse(parallel_process == FALSE, 2L, detectCores())
+    my.cluster_bh <- makeCluster(ncores_bh - 1)
+    registerDoParallel(cl = my.cluster_bh)
     betaHMM_workflow <- function(data_chr, K, M, N, R, chr, seed = NULL,
-                                    iterations=100) {
+                                 iterations=100) {
         data <- subset(data_chr, select = -c(CHR, MAPINFO, IlmnID))
         data_w_ilmnid <- subset(data_chr, select = -c(CHR, MAPINFO))
         data <- as.data.frame(data)
         data_w_ilmnid <- as.data.frame(data_w_ilmnid)
         trained_params <- initialise_parameters(data_w_ilmnid, M, N, R, seed)
-        out_baumwelch<-BaumWelch(data,trained_params,M,N,R,seed,iterations)
+        out_baumwelch<-BaumWelch(data,trained_params,K,M,N,R,seed,iterations)
         out_viterbi <- Viterbi(data, M, N, R, out_baumwelch$tau,
-                                out_baumwelch$A, out_baumwelch$phi)
+                               out_baumwelch$A, out_baumwelch$phi,K)
         return(list(A = out_baumwelch$A, tau = out_baumwelch$tau,
                     sp_1 = out_baumwelch$phi$sp_1,
                     sp_2 = out_baumwelch$phi$sp_2, z = out_baumwelch$z,
-                llk=out_baumwelch$log_vec,hiddenStates=out_viterbi,chr=chr))}
+                    llk=out_baumwelch$log_vec,
+                    hiddenStates=out_viterbi,chr=chr))}
     comb <- function(x, ...) {lapply(seq_along(x),
-                function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))}
+                                     function(i) c(x[[i]],
+                                                   lapply(list(...),
+                                                         function(y) y[[i]])))}
     beta_chr_out <- foreach(chr = seq(1, length(chr_unique)),
-                                    .combine = "comb", .multicombine = TRUE,
-                                    .init = list(list(), list(), list(),
-                                                list(), list(), list(),
-                                                list(), list())) %dopar%
-    betaHMM_workflow(sorted_data[sorted_data$CHR == chr_unique[chr], ],
-                    K, M, N, R, chr_unique[chr],seed,iterations)
-    stopCluster(cl = my.cluster)
+                            .combine = "comb", .multicombine = TRUE,
+                            .init = list(list(), list(), list(),
+                                         list(), list(), list(),
+                                         list(), list())) %dopar%
+        betaHMM_workflow(sorted_data[sorted_data$CHR == chr_unique[chr], ],
+                         K, M, N, R, chr_unique[chr],seed,iterations)
+    stopCluster(cl = my.cluster_bh)
     z_final_out <- as.data.frame(do.call(rbind, beta_chr_out[[5]]))
     chromosome_number <- unlist(beta_chr_out[[8]])
     chromosome_number_list <- paste("chr", chromosome_number)
-    for (i in seq(1, 7)){ names(beta_chr_out[[i]]) <- chromosome_number_list }
-    beta_out_phi <- list(); beta_out_phi[["sp_1"]] <- beta_chr_out[[3]]
-    beta_out_phi[["sp_2"]]<-beta_chr_out[[4]];z<-as.data.frame(z_final_out);
-    rownames(z)<-sorted_data$IlmnID; sorted_data<-as(sorted_data,"DataFrame")
+    beta_chr_out <- lapply(seq_along(beta_chr_out), function(i) {
+        names(beta_chr_out[[i]]) <- chromosome_number_list
+        return(beta_chr_out[[i]])
+    })
+    beta_out_phi <- list()
+    beta_out_phi[["sp_1"]] <- beta_chr_out[[3]]
+    beta_out_phi[["sp_2"]]<-beta_chr_out[[4]]
+    z<-as.data.frame(z_final_out)
+    rownames(z)<-sorted_data$IlmnID
+    sorted_data<-as(sorted_data,"DataFrame")
     select.results<-SummarizedExperiment(assays = z,
-                                        metadata = list(K = K, N = N, R = R,
-                                                    A=beta_chr_out[[1]],
-                                                    tau=beta_chr_out[[2]],
-                                                    phi = beta_out_phi,
-                                                    treatment_group =
-                                                        treatment_group,
-                                                    llk=beta_chr_out[[6]],
-                                                    hidden_states =
-                                                        beta_chr_out[[7]],
-                                                    chromosome_number =
-                                                        unlist(
+                                         metadata = list(K = K, N = N, R = R,
+                                                         A=beta_chr_out[[1]],
+                                                         tau=beta_chr_out[[2]],
+                                                         phi = beta_out_phi,
+                                                         treatment_group =
+                                                             treatment_group,
+                                                         llk=beta_chr_out[[6]],
+                                                         hidden_states =
+                                                             beta_chr_out[[7]],
+                                                         chromosome_number =
+                                                             unlist(
                                                             beta_chr_out[[8]]
-                                                            )))
+                                                             )))
     RES <- betaHMMResults(as(select.results, "RangedSummarizedExperiment"),
-                            annotatedData = sorted_data)
+                          annotatedData = sorted_data)
     return(RES)}
-
 
 #### DMC identification
 #' @title DMC identification from estimated betaHMM model parameters
@@ -216,10 +206,17 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
 #' @example inst/examples/betaHMM_package.R
 
 dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
-                                    uncertainty_threshold = 0.2, ...) {
-    object <- betaHMM_object; chr_unique <- chromosome_number(object)
-    M <- 3; N <- N(object); R <- R(object); K <- K(object); A <- A(object)
-    tau <- tau(object); phi <- phi(object); z <- assay(object)
+                                   uncertainty_threshold = 0.2, ...) {
+    object <- betaHMM_object
+    chr_unique <- chromosome_number(object)
+    M <- 3
+    N <- N(object)
+    R <- R(object)
+    K <- K(object)
+    A <- A(object)
+    tau <- tau(object)
+    phi <- phi(object)
+    z <- assay(object)
     treatment_group <- treatment_group(object)
     is.scalar <- function(x) is.atomic(x) && length(x) == 1L && Im(x) == 0
     if (is.scalar(AUC_threshold)) {
@@ -233,36 +230,58 @@ dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
         stop("Uncertainty threshold cannot be a vector with length less
             than the no. of chromosomes.")}
     cond_prob_threshold <- 1 - uncertainty_threshold
-    df <- as.data.frame(annotatedData(object)); col <- ncol(df)
+    df <- as.data.frame(annotatedData(object))
+    col <- ncol(df)
     df_complete <- matrix(NA, nrow = 1, ncol = (col + 2))
     colnames(df_complete) <- c(colnames(df), "hidden_state", "DMC")
-    auc_list <- list(); uncertainty_list <- list()
-    for (i in seq(1, length(chr_unique))) {
-        phi_chr<-list(); phi_chr[["sp_1"]]<-phi[[1]][[i]]
-        phi_chr[["sp_2"]]<-phi[[2]][[i]]
+    auc_list <- list()
+    uncertainty_list <- list()
+    process_chr <- function(i) {
+        phi_chr <- list()
+        phi_chr[["sp_1"]] <- phi[[1]][[i]]
+        phi_chr[["sp_2"]] <- phi[[2]][[i]]
         auc_df <- AUC_DM_analysis(M, N, R, K, tau[[i]], A[[i]], phi_chr)
-        x<-as.data.frame(t(auc_df))
-        colnames(x)<-c("State","AUC","DM_Conditions")
-        x$AUC <- as.numeric(x$AUC); auc_list[[i]] <- x
-        x_co <- x[x$AUC >= AUC_threshold[i], ]; diff_meth_x <- x_co$State
-        df_chr <- df[df$CHR == chr_unique[i], ]
-        if (nrow(x_co) != 0) { hs <- hidden_states(object)[[i]]
+        x <- as.data.frame(t(auc_df))
+        colnames(x) <- c("State", "AUC", "DM_Conditions")
+        x$AUC <- as.numeric(x$AUC)
+        auc_list <- x
+        x_co <- x[x$AUC >= AUC_threshold[i], , drop = FALSE]
+        diff_meth_x <- x_co$State
+        df_chr <- df[df$CHR == chr_unique[i], , drop = FALSE]
+        if (nrow(x_co) != 0) {
+            hs <- hidden_states(object)[[i]]
             df_chr$hidden_state <- hs
-            z_mat <- z[row.names(z) %in% df_chr$IlmnID, ]
+            z_mat <- z[row.names(z) %in% df_chr$IlmnID, , drop = FALSE]
             if (length(diff_meth_x) > 1) {
                 z_sum2 <- as.vector(rowSums(z_mat[, as.numeric(diff_meth_x)]))
-            } else {  z_sum2 <- as.vector(z_mat[, as.numeric(diff_meth_x)]) }
+            } else {
+                z_sum2 <- as.vector(z_mat[, as.numeric(diff_meth_x)])
+            }
             df_chr$DMC <- ifelse(z_sum2 >= cond_prob_threshold[i], 1, 0)
-            uncertainty_list[[i]] <- 1 - z_sum2
-        } else { df_chr$hidden_state <- 0; df_chr$DMC <- 0;
-        uncertainty_list[[i]] <- 1}; df_complete<-rbind(df_complete, df_chr)}
-    df_complete<-df_complete[-1,];rownames(df_complete)<-df_complete$IlmnID
+            uncertainty_list<- 1 - z_sum2
+        } else {
+            df_chr$hidden_state <- 0
+            df_chr$DMC <- 0
+            uncertainty_list <- rep(1, nrow(df_chr))
+        }
+        return(list(df_chr=df_chr,auc_list=auc_list,
+                    uncertainty_list=uncertainty_list))
+    }
+    result_list <- lapply(seq_along(chr_unique), process_chr)
+    df_list <- lapply(result_list, function(res) res$df_chr)
+    df_complete <- do.call(rbind, df_list)
+    auc_list <- lapply(result_list, function(res) res$auc_list)
+    uncertainty_list <- lapply(result_list, function(res) res$uncertainty_list)
+    rownames(df_complete)<-df_complete$IlmnID
     chrom_list <- paste("chr", chr_unique)
-    names(auc_list) <- chrom_list; names(uncertainty_list) <- chrom_list
+    names(auc_list) <- chrom_list
+    names(uncertainty_list) <- chrom_list
     select.results <-
         SummarizedExperiment(assays=df_complete,
-        metadata =list(K=K,N=N,R=R,treatment_group=treatment_group,
-                        AUC = auc_list, uncertainty =uncertainty_list))
+                             metadata =list(K=K,N=N,R=R,
+                                            treatment_group=treatment_group,
+                                            AUC = auc_list,
+                                            uncertainty =uncertainty_list))
     RES <- dmcResults(as(select.results, "RangedSummarizedExperiment"))
     return(RES)}
 
@@ -298,53 +317,67 @@ dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
 #' @example inst/examples/betaHMM_package.R
 
 dmr_identification_run <- function(dmc_identification_object, DMC_count = 2,
-                                    parallel_process = FALSE, ...) {
-    dmc_df <- dmc_identification_object; chr_unique <- unique(dmc_df$CHR)
+                                   parallel_process = FALSE, ...) {
+    dmc_df <- dmc_identification_object
+    chr_unique <- unique(dmc_df$CHR)
     ncores <- ifelse(parallel_process == FALSE, 2L, detectCores())
     my.cluster <- makeCluster(ncores - 1)
     registerDoParallel(cl = my.cluster)
-    `%dopar%` <- foreach::`%dopar%`;`%do%` <- foreach::`%do%`
     dmr_parallel <- function(dmc_df_chr, DMC_count) {
-        block_counter<-0; block_start <- 0; block_end <- 0; block_length <- 0
-        C <- nrow(dmc_df_chr); mat <- matrix(NA, C, 3)
+        block_counter<-0
+        block_start <- 0
+        block_end <- 0
+        block_length <- 0
+        C <- nrow(dmc_df_chr)
+        mat <- matrix(NA, C, 3)
         for (i in seq(1, C)) { if (dmc_df_chr[i, "DMC"] == 1) {
-                if (block_length == 0) {
-                    block_start <- i ;block_length <- 1 } else {
+            if (block_length == 0) {
+                block_start <- i
+                block_length <- 1 } else {
                     block_length <- block_length + 1}
-                if (block_length >= DMC_count) {
-                    block_counter <- block_counter + 1 }
-            } else { if (block_length >= DMC_count) {
-                mat[block_counter, ] <- c(block_start, i - 1, block_length)}
-                block_start <- 0; block_length <- 0}}
-        mat<-mat[complete.cases(mat),];mat<-as.data.frame(mat);df_unique<-mat
+            if (block_length >= DMC_count) {
+                block_counter <- block_counter + 1 }
+        } else { if (block_length >= DMC_count) {
+            mat[block_counter, ] <- c(block_start, i - 1, block_length)}
+            block_start <- 0
+            block_length <- 0}}
+        mat <- as.data.frame(mat)
+        mat<-mat[complete.cases(mat),, drop=FALSE]
+        df_unique<-mat
         colnames(df_unique) <- c("start_CpG", "end_CpG", "DMR_size")
         cpg_names <- as.vector(dmc_df_chr[, "IlmnID"])
         start_cpg <- vapply(df_unique$start_CpG, function(x) {
             cpg_names[x]}, character(1))
         end_cpg<-vapply(df_unique$end_CpG,
                         function(x) {cpg_names[x]},character(1))
-        df_unique$start_CpG <- start_cpg; df_unique$end_CpG <- end_cpg
+        df_unique$start_CpG <- start_cpg
+        df_unique$end_CpG <- end_cpg
         map_start <- vapply(df_unique$start_CpG, function(x) {
-        dmc_df_chr[dmc_df_chr$IlmnID == x, "MAPINFO"]}, numeric(1))
+            dmc_df_chr[dmc_df_chr$IlmnID == x, "MAPINFO"]}, numeric(1))
         map_end <- vapply(df_unique$end_CpG, function(x) {
-        dmc_df_chr[dmc_df_chr$IlmnID == x, "MAPINFO"]}, numeric(1))
-        if(nrow(df_unique)!=0){df_unique$CHR <- unique(dmc_df_chr$CHR)
-        df_unique$map_start <- map_start; df_unique$map_end <- map_end
-        for (j in seq(1, nrow(df_unique))) {
+            dmc_df_chr[dmc_df_chr$IlmnID == x, "MAPINFO"]}, numeric(1))
+        if(nrow(df_unique)!=0){
+            df_unique$CHR <- unique(dmc_df_chr$CHR)
+        df_unique$map_start <- map_start
+        df_unique$map_end <- map_end
+        df_unique$DMCs <- unlist(lapply(seq_len(nrow(df_unique)), function(j){
             start <- which(dmc_df_chr$MAPINFO == df_unique[j, 5] &
-                            dmc_df_chr$CHR == df_unique[j, 4])
+                                dmc_df_chr$CHR == df_unique[j, 4])
             end <- which(dmc_df_chr$MAPINFO == df_unique[j, 6] &
-                            dmc_df_chr$CHR == df_unique[j, 4])
-            x <- dmc_df_chr[start:end, "IlmnID"]
-            df_unique[j,"DMCs"]<-paste(x,collapse=",")}}; return(df_unique)}
+                                dmc_df_chr$CHR == df_unique[j, 4])
+            x <-as.vector(unlist(dmc_df_chr[start:end,"IlmnID",drop = FALSE]))
+            return(paste(as.character(x), collapse = ","))
+        }))
+        }
+        return(df_unique)}
     dmr_mat <- foreach(chr = seq(1, length(chr_unique)),
-                                .combine = rbind) %dopar%
+                       .combine = rbind) %dopar%
         dmr_parallel(dmc_df[dmc_df$CHR == chr_unique[chr],], DMC_count)
     stopCluster(cl = my.cluster)
-    dmr_df <- dmr_mat[complete.cases(dmr_mat), ]
+    dmr_df <- dmr_mat[complete.cases(dmr_mat), , drop=FALSE]
     rownames(dmr_df) <- dmr_df$start_CpG
     select.results <- SummarizedExperiment(assays = dmr_df,
-                        metadata = list(chromosome_number =chr_unique))
+                                           metadata = list(chromosome_number=
+                                                                chr_unique))
     RES <- dmrResults(as(select.results, "RangedSummarizedExperiment"))
     return(RES)}
-

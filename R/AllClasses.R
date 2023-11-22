@@ -1,13 +1,22 @@
 #' @rdname betaHMMResults
 #' @export
-#' @import SummarizedExperiment
+#' @importFrom methods setClass is as new
+#' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
+
+
 
 setClass("betaHMMResults",
             contains = "RangedSummarizedExperiment",
             representation = representation(annotatedData="DataFrame"))
 
-## TODO:
-## setValidity( ... )
+setValidity("betaHMMResults",function(object){
+    if(nrow(object@annotatedData)!=nrow(object@assays) &
+       ncol(object@assays)!=object@metadata[[1]])
+    {
+        "Conditional posterior probability needs to be calculated for each
+        of the CpG sites and K hidden states."
+    }
+})
 
 
 #' betaHMMResults object and constructor
@@ -37,13 +46,9 @@ setClass("betaHMMResults",
 #' @export
 #' @example inst/examples/betaHMM_package.R
 betaHMMResults <- function(SummarizedExperiment,annotatedData) {
-    se <- SummarizedExperiment
-    if (!is(se, "RangedSummarizedExperiment")) {
-    stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-    }
-    if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
-                                                                nrow=0,ncol=0))
-    object <- new("betaHMMResults", se, annotatedData=annotatedData)
+    se_obj<-se(SummarizedExperiment)
+    annotatedData<-anno_data(annotatedData)
+    object <- new("betaHMMResults", se_obj, annotatedData=annotatedData)
     return(object)
     }
 
@@ -54,8 +59,14 @@ betaHMMResults <- function(SummarizedExperiment,annotatedData) {
 setClass("dmrResults",
             contains = "RangedSummarizedExperiment")
 
-## TODO:
-## setValidity( ... )
+
+setValidity("dmrResults",function(object){
+    x<-as.data.frame(assay(object))
+    if(any(is.na(x[,seq_len(2)])))
+    {
+        "Starting and ending CpG sites of a DMR cannot be empty."
+    }
+})
 
 
 #' dmrResults object and constructor
@@ -84,12 +95,8 @@ setClass("dmrResults",
 #' @export
 #' @example inst/examples/betaHMM_package.R
 dmrResults <- function(SummarizedExperiment) {
-    se <- SummarizedExperiment
-    if (!is(se, "RangedSummarizedExperiment")) {
-    stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-    }
-
-    object <- new("dmrResults", se)
+    se_obj<-se(SummarizedExperiment)
+    object <- new("dmrResults", se_obj)
     return(object)
 }
 
@@ -98,13 +105,20 @@ dmrResults <- function(SummarizedExperiment) {
 
 #' @rdname dmcResults
 #' @export
-#' @import SummarizedExperiment
+#' @importFrom methods setClass
+#' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
+
 
 setClass("dmcResults",
             contains = "RangedSummarizedExperiment")
 
-## TODO:
-## setValidity( ... )
+
+setValidity("dmcResults",function(object){
+    if(nrow(object@assays) !=length(unlist(object@metadata[[6]])))
+    {
+        "Uncertainty needs to be calculated for each CpG site analysed."
+    }
+})
 
 
 #' dmcResults object and constructor
@@ -133,12 +147,8 @@ setClass("dmcResults",
 #' @export
 #' @example inst/examples/betaHMM_package.R
 dmcResults <- function(SummarizedExperiment) {
-    se <- SummarizedExperiment
-    if (!is(se, "RangedSummarizedExperiment")) {
-    stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-    }
-
-    object <- new("dmcResults", se)
+    se_obj<-se(SummarizedExperiment)
+    object <- new("dmcResults", se_obj)
     return(object)
 }
 
@@ -147,7 +157,9 @@ dmcResults <- function(SummarizedExperiment) {
 
 #' @rdname threshold_Results
 #' @export
-#' @import SummarizedExperiment
+#' @importFrom methods setClass
+#' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
+
 
 setClass("threshold_Results",
             contains = "RangedSummarizedExperiment",
@@ -156,8 +168,15 @@ setClass("threshold_Results",
 
             ))
 
-## TODO:
-## setValidity( ... )
+
+setValidity("threshold_Results",function(object){
+    if(nrow(object@annotatedData)!=nrow(object@assays) &
+       ncol(object@assays)!=object@metadata[[2]])
+    {
+        "Conditional posterior probability needs to be calculated for each
+        of the CpG sites and K hidden states."
+    }
+})
 
 
 #' threshold_Results object and constructor
@@ -209,12 +228,8 @@ setClass("threshold_Results",
 
 threshold_Results <- function(SummarizedExperiment,
                             annotatedData) {
-    se <- SummarizedExperiment
-    if (!is(se, "RangedSummarizedExperiment")) {
-    stop("'SummarizedExperiment' must be a RangedSummarizedExperiment object")
-    }
-    if(is.null(annotatedData)) annotatedData <- DataFrame(matrix(0,
-                                                                nrow=0,ncol=0))
-    object <- new("threshold_Results", se, annotatedData=annotatedData)
+    se_obj<-se(SummarizedExperiment)
+    annotatedData<-anno_data(annotatedData)
+    object <- new("threshold_Results", se_obj, annotatedData=annotatedData)
     return(object)
 }

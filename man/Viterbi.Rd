@@ -4,7 +4,7 @@
 \alias{Viterbi}
 \title{Estimating the hidden states using Viterbi algorithm}
 \usage{
-Viterbi(data, M, N, R, tau, A, phi)
+Viterbi(data, M, N, R, tau, A, phi, K)
 }
 \arguments{
 \item{data}{A dataframe of dimension \eqn{C \times (N \times R)} containing
@@ -26,6 +26,8 @@ treatment group.}
 
 \item{phi}{The shape parameters for the observation sequence data
 in the betaHMM model.}
+
+\item{K}{The number of hidden states identified using the betaHMM model.}
 }
 \value{
 A vector containing the most probable sequence of the hidden states

@@ -19,12 +19,13 @@
 #' and threshold for the methylation states in a single DNA treatment condition
 #' from the \code{\link[betaHMM:threshold_Results]{threshold_Results}} object.
 #'
-#' @importFrom ggplot2 ggplot aes
+#' @importFrom ggplot2 ggplot aes annotate ggplot_build geom_line labs
+#' @importFrom ggplot2 scale_color_manual geom_vline
 #' @importFrom scales seq_gradient_pal
 #' @importFrom stats dbeta
 setMethod(f = "plot", signature(x = "threshold_Results"),
             definition = function(x, plot_threshold=TRUE,title = NULL, ...) {
-    # x <- object
+
     graph_objects <- c()
 
     object <- x
@@ -37,26 +38,29 @@ thresholdGlobalplots <- function(x, plot_threshold=TRUE,title = NULL, ...) {
     txt <- ifelse(is.null(title), "", title)
     data <- as.data.frame(annotatedData(x))
     df_plot <- subset(data, select = -c(IlmnID))
-    data_x <- sort(df_plot[, 1]); K <- K(x)
+    data_x <- sort(df_plot[, 1])
+    K <- K(x)
     prop <- as.numeric(table(hidden_states(x)))/nrow(data)
     data_th_plot <- matrix(data = NA, nrow = 1, ncol = 3)
     data_th_plot <- as.data.frame(data_th_plot)
     colnames(data_th_plot) <- c("beta_value", "density", "Cluster")
     phi_complete <- model_parameters(x)$phi
-    alpha <- phi_complete[[1]]; delta <- phi_complete[[2]]
-    for (i in seq(1, K)) {
+    alpha <- phi_complete[[1]]
+    delta <- phi_complete[[2]]
+    data_th_plot_list <- lapply(seq(1, K), function(i) {
         beta_value <- data_x
         Cluster <- rep(i, length(data_x))
         density <- prop[i] * dbeta(data_x, alpha[i], delta[i])
-        temp <- cbind(beta_value, density, Cluster)
-        data_th_plot <- rbind(data_th_plot, temp)  }
+        data.frame(beta_value = beta_value,density = density,Cluster = Cluster)
+    })
+    data_th_plot <- do.call(rbind, data_th_plot_list)
     data_th_plot <- as.data.frame(data_th_plot)
     data_th_plot <- data_th_plot[-1, ]
     data_th_plot$Cluster <- as.factor(data_th_plot$Cluster)
     plot_graph <- ggplot(data_th_plot) + geom_line(aes(beta_value,
-                                                        density,
-                                                        color = Cluster),
-                                                    linetype = "solid") +
+                                                       density,
+                                                       color = Cluster),
+                                                   linetype = "solid") +
         labs(x="Beta value",y="Density",title = txt, color = "Hidden States")
     if (K == 3) {
         colours <- c("chartreuse3", "magenta", "cyan3")
@@ -64,7 +68,8 @@ thresholdGlobalplots <- function(x, plot_threshold=TRUE,title = NULL, ...) {
     p.data <- ggplot_build(plot_graph)$data[[1]]
     p.text <- lapply(split(p.data, f = p.data$group), function(df) {
         df[which.max(df$y), ]})
-    p.text <- do.call(rbind, p.text); p.text$prop <- prop
+    p.text <- do.call(rbind, p.text)
+    p.text$prop <- prop
     plot_graph <- plot_graph + annotate("text", x = p.text$x, y = 0.2,
                                         label = sprintf("%.3f", p.text$prop),
                                         colour = p.text$colour, vjust = 0)

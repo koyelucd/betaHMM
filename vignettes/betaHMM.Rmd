@@ -3,7 +3,10 @@ title: "*betaHMM* package: Quick-start guide"
 author: "Koyel Majumdar, Isobel Claire Gormley, Thomas Brendan Murphy, 
 Romina Silva, Antoinette Sabrina Perry, Ronald William Watson, 
 Florence Jaffrézic, Andrea Rau"
-output: rmarkdown::html_vignette
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+  BiocStyle::pdf_document: default
 always_allow_html: true
 vignette: >
   %\VignetteIndexEntry{betaHMM}
@@ -25,24 +28,39 @@ knitr::opts_chunk$set(eval = TRUE)
 #knitr::opts_chunk$set(dpi=100)
 ```
 
+# Installation
+To install this package, start R (version "4.3") and enter:
+
+```{r biocsetup, eval=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("betaHMM")
+```
 
 # Introduction
 
-DNA methylation, the addition of a methyl group to a cytosine-guanine 
-dinucleotide (CpG) site, is influenced by environmental factors and serves as a 
-disease biomarker. In diploid individuals, CpG sites are hypermethylated (both 
-strands methylated), hypomethylated (neither strand methylated), or 
-hemimethylated (one strand methylated). Identifying differentially methylated 
-CpG sites (DMC) and regions (DMR) can reveal the impact of environmental 
+DNA methylation, the addition of a methyl group to a cytosine-guanine
+dinucleotide (CpG) site, is influenced by environmental factors and serves as a
+disease biomarker. In diploid individuals, CpG sites are hypermethylated (both
+strands methylated), hypomethylated (neither strand methylated), or
+hemimethylated (one strand methylated). Identifying differentially methylated
+CpG sites (DMC) and regions (DMR) can reveal the impact of environmental
 stressors.
 
-Methylation levels, called beta values, represent the proportion of methylated 
-probes, usually modeled with beta distributions. They are often logit 
-transformed into M-values for modeling. To directly model beta values and 
-account for spatial correlation between CpG sites, we propose a homogeneous 
-hidden Markov model (HMM) approach called betaHMM. It identifies DMCs and DMRs 
-while considering spatial dependency and sample relationships. Simulation and 
-prostate cancer data demonstrate its effectiveness.
+Methylation levels, called beta values, represent the proportion of methylated
+probes, usually modeled with beta distributions. They are often logit
+transformed into M-values for modeling. To directly model beta values and
+account for spatial correlation between CpG sites, we propose a homogeneous
+hidden Markov model (HMM) approach called betaHMM. It identifies DMCs and DMRs
+while considering spatial dependency and sample relationships. Simulation and
+prostate cancer data demonstrate its effectiveness. Through our submission of
+betaHMM to Bioconductor, we intend to contribute to the open-source software
+ecosystem, supporting robust and reproducible data analysis
+for both established and emerging biological assays.
 
 This document gives a quick tour of the functionalities in **betaHMM**. See
 `help(package="betaHMM")` for further details and references provided by
@@ -55,7 +73,7 @@ Before starting the **betaHMM** walk through, the user should have a working
 R software environment installed on their machine. The **betaHMM** package has
 the following dependencies which, if not already installed on the machine will
 automatically be installed along with the package:
-**stats, ggplot2, utils,  scales, methods, pROC, foreach, doParallel, cowplot, 
+**stats, ggplot2, utils,  scales, methods, pROC, foreach, doParallel, cowplot,
 dplyr, tidyr, stringr**.
 
 

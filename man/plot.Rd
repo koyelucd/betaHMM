@@ -105,7 +105,7 @@ set.seed(12345)
 ## read files
 data(sample_methylation_file)
 data(sample_annotation_file)
-## Run betaHMM function
+# Run betaHMM function
 beta_out <- betaHMM(sample_methylation_file[1:50,],
                     sample_annotation_file[1:50,],
                     M = 3, N = 4, R = 2,iterations=2,
@@ -131,7 +131,7 @@ set.seed(12345)
 ## read files
 data(sample_methylation_file)
 data(sample_annotation_file)
-## Run betaHMM function
+# Run betaHMM function
 beta_out <- betaHMM(sample_methylation_file[1:50,],
                     sample_annotation_file[1:50,],
                     M = 3, N = 4, R = 2,iterations=2,

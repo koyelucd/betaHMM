@@ -27,7 +27,7 @@
 #' stored as metadata.
 #'
 #' @importFrom stats kmeans
-#' @importFrom stats sd
+#' @importFrom stats sd complete.cases
 #' @examples
 #' ## Use simulated data for the betaHMM workflow example
 #' set.seed(12345)
@@ -51,52 +51,45 @@
 
 
 threshold_identification_run<-function(data,package_workflow=TRUE,
-                                        annotation_file=NULL,M,N,
-                                        parameter_estimation_only=FALSE,
-                                        seed = NULL,...)
-    {
+                                       annotation_file=NULL,M,N,
+                                       parameter_estimation_only=FALSE,
+                                       seed = NULL,...)
+{
+    if (M != 3) {
+        stop("M cannot be more or less than 3 as this function tries to
+             identify the threshold between the 3 methylation states. ")
+    } else if (any(N < 1)) { stop("N cannot be
+    less than 1 as one or more DNA replicates need to be analysed.")
+    } else if (M!=round(M)|N!=round(N)){
+        stop("M and N has to be whole numbers.")}
     if (package_workflow == FALSE) {if (is.null(annotation_file))
-            stop("Annotation file cannot be empty if data is not sorted.")
-        final_subset <- subset(data, select = -IlmnID)
-        if (abs(max(final_subset) - 1) < 1e-06) {
-            max_f <- max(final_subset[final_subset != max(final_subset)])
-        } else {max_f <- max(final_subset)}
-        if (abs(min(final_subset) - 0) < 1e-06) {
-            min_f <- min(final_subset[final_subset != min(final_subset)])
-        } else {min_f <- min(final_subset)}
-        final_subset[final_subset > max_f] <- max_f
-        final_subset[final_subset < min_f] <- min_f
-        cols<-which(colnames(data)!="IlmnID"); data[, cols] <- final_subset
-        data_merged<-merge(data,annotation_file[,c("IlmnID","CHR",
-                                                    "MAPINFO")],by="IlmnID")
-        col_order <- which(colnames(data_merged) == "IlmnID" |
-                                colnames(data_merged) == "CHR" |
-                                colnames(data_merged) == "MAPINFO")
-        col_order2 <- which(colnames(data_merged) != "IlmnID" &
-                                colnames(data_merged) != "CHR" &
-                                colnames(data_merged) != "MAPINFO")
-        data_merged<-data_merged[,c(col_order,col_order2)]
-        complete_data<-data_merged
-        complete_data <- complete_data[stats::complete.cases(complete_data), ]
+        stop("Annotation file cannot be empty if data is not sorted.")
+        data_merged<-beta_value_numeric(data,annotation_file)
+        complete_data<-as.data.frame(data_merged)
+        complete_data<-complete_data[complete.cases(complete_data),,drop=FALSE]
         sorted_data<-complete_data[order(as.numeric(complete_data$CHR),
-                                        as.numeric(complete_data$MAPINFO)), ]
+                                         as.numeric(complete_data$MAPINFO)), ]
         sorted_data <- as.data.frame(sorted_data)
         data_final <- subset(sorted_data, select = -c(CHR, MAPINFO, IlmnID))
         data_return <- subset(sorted_data, select = -c(CHR, MAPINFO))
-    } else {data_final<-subset(data,select=-c(IlmnID)); data_return<-data}
-    th_bw_out <- BaumWelch_th(data_final, M = M, N = N, R = 1, seed = seed)
+    } else {data_final<-subset(data,select=-c(IlmnID))
+    data_return<-data}
+    th_bw_out <- BaumWelch(data_final, K=M,M = M, N = N, R = 1, seed = seed)
     if (parameter_estimation_only == FALSE) {
-        th_vit_out<-Viterbi_th(data_final,M=M,N=N,R=1,th_bw_out$tau,
-                                th_bw_out$A, th_bw_out$phi)
+        th_vit_out<-Viterbi(data_final,M=M,N=N,R=1,th_bw_out$tau,
+                               th_bw_out$A, th_bw_out$phi,K=M)
         tau <- as.numeric(table(th_vit_out)/(nrow(data_final)))
         threshold_bhmm <- threshold_values(data_final, tau, th_bw_out$phi)
-    } else {th_vit_out <- NA; threshold_bhmm <- NA }
-    z <- as.data.frame(th_bw_out$z); rownames(z) <- data_return[, "IlmnID"]
+    } else {th_vit_out <- NA
+    threshold_bhmm <- NA }
+    z <- as.data.frame(th_bw_out$z)
+    rownames(z) <- data_return[, "IlmnID"]
     data_return <- as(data_return, "DataFrame")
     select.results <- SummarizedExperiment(assays = z, metadata =
-                                            list(model_parameters = th_bw_out,
-                                            K=M,hidden_states=th_vit_out,
-                                            threshold = threshold_bhmm))
+                                               list(model_parameters=th_bw_out,
+                                                    K=M,
+                                                    hidden_states=th_vit_out,
+                                                    threshold=threshold_bhmm))
     RES <- threshold_Results(as(select.results, "RangedSummarizedExperiment"),
-                                annotatedData = data_return)
+                             annotatedData = data_return)
     return(RES)}

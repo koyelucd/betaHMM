@@ -13,6 +13,13 @@
 \alias{betaHMM,data.frame,RangedSummarizedExperiment.-method}
 \alias{betaHMM,RangedSummarizedExperiment,data.frame-method}
 \alias{betaHMM,RangedSummarizedExperiment,matrix-method}
+\alias{betaHMM,GRanges,data.frame-method}
+\alias{betaHMM,GRanges,matrix-method}
+\alias{betaHMM,GRanges,RangedSummarizedExperiment-method}
+\alias{betaHMM,GRanges,GRanges-method}
+\alias{betaHMM,data.frame,GRanges-method}
+\alias{betaHMM,RangedSummarizedExperiment,GRanges-method}
+\alias{betaHMM,matrix,GRanges-method}
 \alias{betaHMM,RangedSummarizedExperiment,RangedSummarizedExperiment-method}
 \alias{betaHMM,matrix,RangedSummarizedExperiment-method}
 \alias{betaHMM,data.frame,RangedSummarizedExperiment-method}
@@ -59,6 +66,19 @@ betaHMM(methylation_data, annotation_file, ...)
   ...
 )
 
+\S4method{betaHMM}{GRanges,GRanges}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
 \S4method{betaHMM}{RangedSummarizedExperiment,matrix}(
   methylation_data,
   annotation_file,
@@ -73,6 +93,19 @@ betaHMM(methylation_data, annotation_file, ...)
 )
 
 \S4method{betaHMM}{RangedSummarizedExperiment,data.frame}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
+\S4method{betaHMM}{RangedSummarizedExperiment,GRanges}(
   methylation_data,
   annotation_file,
   M = 3,
@@ -111,7 +144,72 @@ betaHMM(methylation_data, annotation_file, ...)
   ...
 )
 
+\S4method{betaHMM}{data.frame,GRanges}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
 \S4method{betaHMM}{matrix,data.frame}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
+\S4method{betaHMM}{matrix,GRanges}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
+\S4method{betaHMM}{GRanges,matrix}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
+\S4method{betaHMM}{GRanges,data.frame}(
+  methylation_data,
+  annotation_file,
+  M = 3,
+  N = 4,
+  R = 2,
+  treatment_group = NULL,
+  parallel_process = FALSE,
+  seed = NULL,
+  iterations = 100,
+  ...
+)
+
+\S4method{betaHMM}{GRanges,RangedSummarizedExperiment}(
   methylation_data,
   annotation_file,
   M = 3,
@@ -141,11 +239,11 @@ betaHMM(methylation_data, annotation_file, ...)
 \item{methylation_data}{A dataframe of dimension \eqn{(C \times (N \times R)
 )+1} containing methylation values for \eqn{C} CpG sites from \eqn{R}
 treatment groups each having \eqn{N} DNA samples and the IlmnID
-for each CpG site. Maybe provided as a matrix or data.frame
+for each CpG site. Maybe provided as a matrix or data.frame, GRanges
 or RangedSummarizedExperiment object.}
 
 \item{annotation_file}{A dataframe containing the EPIC methylation
-annotation file. Maybe provided as a matrix or data.frame
+annotation file. Maybe provided as a matrix or data.frame, GRanges
 or RangedSummarizedExperiment object.}
 
 \item{...}{Extra arguments}
@@ -183,8 +281,9 @@ chromosome are stored as metadata.
 This is the primary user interface for the \code{betaHMM} function
 Generic S4 methods are implemented to eatimate the parameters of a
 homogeneous hidden Markov model for the beta valued DNA methylation data.
-The supported classes are \code{matrix}, \code{data.frame} and
-\code{RangedSummarizedExperiment}. The output of \code{betaHMM} method is an
+The supported classes are \code{matrix}, \code{data.frame},
+\code{RangedSummarizedExperiment} and \code{GRanges}. The output of
+\code{betaHMM} method is an
 S4 object of class \code{betaHMMResults}.
 }
 \examples{
@@ -194,7 +293,7 @@ set.seed(12345)
 ## read files
 data(sample_methylation_file)
 data(sample_annotation_file)
-## Run betaHMM function
+# Run betaHMM function
 beta_out <- betaHMM(sample_methylation_file[1:50,],
                     sample_annotation_file[1:50,],
                     M = 3, N = 4, R = 2,iterations=2,

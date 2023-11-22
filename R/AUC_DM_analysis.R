@@ -24,36 +24,40 @@ AUC_DM_analysis <- function(M, N, R, K, tau, A, phi) {
     delta <- t(phi$sp_2)
     comb <- factorial(R)/(factorial(2) * factorial(R - 2))
     auc_vec <- vector()
-    auc_final <- vector(); comp_final <- vector()
+    auc_final <- vector()
+    comp_final <- vector()
     n <- 1000
     auc_mat <- matrix(NA, nrow = K, ncol = comb)
     text <- vector()
-    for (j in seq(1, K)) {
-        shape_1 <- alpha[j, seq(1, R)]
-        shape_2 <- delta[j, seq(1, R)]
-        vec_count <- 1; comp_vec<-vector()
-        for (i in seq(1, (R - 1))) {
-            for (k in (i + 1):R) {
-                group_1 <- rbeta(n, shape1 = shape_1[i], shape2 = shape_2[i])
-                group_2 <- rbeta(n, shape1 = shape_1[k], shape2 = shape_2[k])
-                auc_dat <- data.frame(predictor = c(group_1, group_2),
-                                        response = factor(c(rep(0, n),
-                                                            rep(1, n))))
-                auc_value <- auc(predictor = auc_dat$predictor,
-                                    response = auc_dat$response,
-                                    quiet = TRUE)
-                auc_vec[vec_count] <- unlist(auc_value)
-                comp_vec[vec_count]<-paste(i,"-->",k)
-                vec_count <- vec_count + 1
-            }
-        }
-        auc_final[j] <- max(auc_vec)
-        comp_final[j]<-comp_vec[which.max(auc_vec)]
+    process_j <- function(j, R, alpha, delta) {
+        shape_1 <- alpha[j, seq_len(R), drop = FALSE]
+        shape_2 <- delta[j, seq_len(R), drop = FALSE]
+        i <- rep(seq_len(R-1), each = R - 1)
+        k <- rep((i + 1):R, each = R - 1)
+        group_1 <- rbeta(n * (R - 1) * (R - 1), shape1 = shape_1[i],
+                         shape2 = shape_2[i])
+        group_2 <- rbeta(n * (R - 1) * (R - 1), shape1 = shape_1[k],
+                         shape2 = shape_2[k])
+        auc_dat <- data.frame(
+            predictor = c(group_1, group_2),
+            response = factor(rep(0:1, each = n * (R - 1) * (R - 1))))
+        auc_values <- auc(predictor = auc_dat$predictor,
+                          response = auc_dat$response, quiet = TRUE)
+        auc_vec <- unlist(auc_values)
+        max_index <- which.max(auc_vec)
+        auc_final <- auc_vec[max_index]
+        comp_final <- paste(i[max_index], "-->", k[max_index])
+        return(c(auc_final,comp_final))
     }
+    indices <- seq(1, K)
+    result<-lapply(indices, process_j, R = R, alpha = alpha, delta = delta)
+    result<-do.call(rbind,result)
+    auc_final<-as.numeric(as.vector(result[,1]))
+    comp_final<-result[,2]
     auc_df <- as.data.frame(cbind(as.character(seq(1, K)),
-                                    as.numeric(round(auc_final, 3)),
+                                  as.numeric(round(auc_final, 3)),
                                   comp_final))
-    auc_df <- auc_df[order(auc_df$V2), ]
+    auc_df <- auc_df[order(auc_df$V2), , drop=FALSE]
     auc_df <- t(auc_df)
     rownames(auc_df) <- c("State", "AUC","DM_Conditions")
     return(auc_df)

@@ -27,19 +27,19 @@ initialise_parameters <- function(data, M, N, R, seed = NULL) {
     tau <- rep(1/K, K)  ## initial mixing proportions
     sh_p1 <- list()
     sh_p2 <- list()
-    n1 <- 1
-    n2 <- N[1]
     data_ilmnid <- data[, "IlmnID"]
     data <- subset(data, select = -c(IlmnID))
-    for (r in seq(1, R)) {
-        data_th <- cbind(data_ilmnid, data[, n1:n2])
+    process_r <- function(r, data_ilmnid, data, N,n1,n2) {
+        start<-n1[r]
+        end<-n2[r]
+        data_th <- cbind(data_ilmnid, data[, start:end, drop = FALSE])
         data_th <- as.data.frame(data_th)
         colnames(data_th)[1] <- "IlmnID"
         threshold_out <- threshold_identification(data_th,
-                                                    package_workflow = TRUE,
-                                                    M = 3, N[r],
-                                                    parameter_estimation_only=
-                                                    TRUE, seed = 321)
+                                                  package_workflow = TRUE,
+                                                  M = 3, N = N[r],
+                                                  parameter_estimation_only =
+                                                      TRUE, seed = 321)
         model_params <- model_parameters(threshold_out)
         alpha <- model_params$phi$sp_1
         beta <- model_params$phi$sp_2
@@ -47,18 +47,31 @@ initialise_parameters <- function(data, M, N, R, seed = NULL) {
         delta <- sort(beta, decreasing = TRUE)
         alpha[2] <- 1
         delta[2] <- 1
-        sh_p1[[r]] <- alpha
-        sh_p2[[r]] <- delta
-        if ((r + 1) <= R) {
-            n1 <- n1 + N[r]
-            n2 <- n2 + N[r + 1]
-        }
+        return(list(alpha=alpha,delta=delta))
     }
+    indices <- seq(1, R)
+    n1<-vector()
+    n2<-vector()
+    n1[1]<-1
+    n2[1]<-N[1]
+    n1 <- c(1, cumsum(N[-R]+1))
+    n2 <- cumsum(N)
+    result<-lapply(indices, process_r, data_ilmnid = data_ilmnid,
+                   data = data, N = N,n1,n2)
+    alpha_df <- do.call(rbind,
+                        lapply(result,
+                               function(res) as.data.frame(t(res$alpha))))
+    delta_df <- do.call(rbind,
+                        lapply(result,
+                               function(res) as.data.frame(t(res$delta))))
+    sh_p1 <- lapply(seq_len(nrow(alpha_df)),
+                    function(i) as.vector(as.numeric(alpha_df[i, ])))
+    sh_p2 <- lapply(seq_len(nrow(delta_df)),
+                    function(i) as.vector(as.numeric(delta_df[i, ])))
     x1 <- do.call(expand.grid, sh_p1)
     x2 <- do.call(expand.grid, sh_p2)
     x1 <- t(x1)
     x2 <- t(x2)
-
     phi <- list(sp_1 = x1, sp_2 = x2)
     rownames(phi$sp_1) <- NULL
     rownames(phi$sp_2) <- NULL

@@ -65,20 +65,25 @@ setMethod(f = "plot", signature(x = "betaHMMResults"),
 })
 
 betaHMMGlobalplots<-function(x,chromosome=NULL,what="fitted density",
-                            treatment_group=NULL,AUC=NULL,
-                            uncertainty_threshold=0.2, title = NULL, ...) {
+                              treatment_group=NULL,AUC=NULL,
+                              uncertainty_threshold=0.2, title = NULL, ...) {
     if (is.null(chromosome)) stop("Chromosome number cannot be empty")
     chromosome <- as.numeric(chromosome)
-    object <- x; plotdata <- annotatedData(object)
+    object <- x
+    plotdata <- annotatedData(object)
     plotdata <- as.data.frame(plotdata)
     label_chromosome <- paste("chr", chromosome, sep = " ")
-    R <- R(object); N <- N(object); C <- nrow(data); K <- K(object)
+    R <- R(object)
+    N <- N(object)
+    C <- nrow(data)
+    K <- K(object)
     phi_complete <- phi(object)
     phi <- list()
     phi[["sp_1"]] <- phi_complete[[1]][[label_chromosome]]
     phi[["sp_2"]] <- phi_complete[[2]][[label_chromosome]]
     data_comp <- plotdata[plotdata$CHR == chromosome, ]
-    data <- data_comp[, -c(seq(1, 3))];  C <- nrow(data)
+    data <- data_comp[, -c(seq(1, 3))]
+    C <- nrow(data)
     hidden_states <- hidden_states(object)[[label_chromosome]]
     if (is.null(title)) {
         title_text <- ""
@@ -92,18 +97,18 @@ betaHMMGlobalplots<-function(x,chromosome=NULL,what="fitted density",
         auc <- as.data.frame(AUC[[label_chromosome]])
         auc <- auc[order(auc$AUC, decreasing = TRUE), ]
         auc$label <- paste("State ", auc$State, ", AUC = ",
-                            round(auc$AUC, 2), sep = "")
+                           round(auc$AUC, 2), sep = "")
     } else {
         label <- seq(1, K)
         auc <- as.data.frame(label)
     }
     if (what == "kernel density") {
         plot_graph <- kernel_density_plot(data, hidden_states, auc, C,
-                                            treatment_group, title_text)
+                                          treatment_group, title_text)
     }
     if (what == "fitted density") {
         plot_graph <- fitted_density_plot(phi, hidden_states, auc, R, K, C,
-                                            treatment_group, title_text)
+                                          treatment_group, title_text)
     }
     if (what == "uncertainty") {
         z <- assay(object)
@@ -112,4 +117,3 @@ betaHMMGlobalplots<-function(x,chromosome=NULL,what="fitted density",
     }
     return(plot_graph)
 }
-

@@ -3,18 +3,19 @@
 #' This is the primary user interface for the \code{betaHMM} function
 #' Generic S4 methods are implemented to eatimate the parameters of a
 #' homogeneous hidden Markov model for the beta valued DNA methylation data.
-#' The supported classes are \code{matrix}, \code{data.frame} and
-#' \code{RangedSummarizedExperiment}. The output of \code{betaHMM} method is an
+#' The supported classes are \code{matrix}, \code{data.frame},
+#' \code{RangedSummarizedExperiment} and \code{GRanges}. The output of
+#' \code{betaHMM} method is an
 #' S4 object of class \code{betaHMMResults}.
 #'
 #' @inheritParams betaHMMrun
 #' @param methylation_data A dataframe of dimension \eqn{(C \times (N \times R)
 #' )+1} containing methylation values for \eqn{C} CpG sites from \eqn{R}
 #' treatment groups each having \eqn{N} DNA samples and the IlmnID
-#' for each CpG site. Maybe provided as a matrix or data.frame
+#' for each CpG site. Maybe provided as a matrix or data.frame, GRanges
 #' or RangedSummarizedExperiment object.
 #' @param annotation_file A dataframe containing the EPIC methylation
-#' annotation file. Maybe provided as a matrix or data.frame
+#' annotation file. Maybe provided as a matrix or data.frame, GRanges
 #' or RangedSummarizedExperiment object.
 #'
 #' @return An S4 object of class \code{betaHMMResults}, where conditional
@@ -35,13 +36,22 @@
 #' betaHMM,data.frame,RangedSummarizedExperiment.-method
 #' betaHMM,RangedSummarizedExperiment,data.frame-method
 #' betaHMM,RangedSummarizedExperiment,matrix-method
+#' betaHMM,GRanges,data.frame-method
+#' betaHMM,GRanges,matrix-method
+#' betaHMM,GRanges,RangedSummarizedExperiment-method
+#' betaHMM,GRanges,GRanges-method
+#' betaHMM,data.frame,GRanges-method
+#' betaHMM,RangedSummarizedExperiment,GRanges-method
+#' betaHMM,matrix,GRanges-method
 #' @author Koyel Majumdar
 #' @export
 #' @keywords methods
 #' @rdname betaHMM
 #' @docType methods
-#' @import methods
+#' @importFrom methods setMethod is as new
 #' @importFrom stats p.adjust
+#' @importClassesFrom GenomicRanges GRanges
+#' @importFrom GenomicRanges mcols
 #' @example inst/examples/betaHMM_package.R
 #'
 
@@ -51,7 +61,6 @@ annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
 parallel_process = FALSE, seed = NULL,iterations=100,...) {
 data1 <- as.data.frame(methylation_data)
 data2 <- as.data.frame(annotation_file)
-# arg.user <- list(...)
 run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
                     M = M, N = N, R = R, treatment_group = treatment_group,
                     parallel_process = parallel_process,
@@ -101,6 +110,23 @@ return(run)
 ##############################################################################
 #' @rdname betaHMM
 #' @export
+setMethod("betaHMM",signature=signature(methylation_data="GRanges",
+annotation_file = "GRanges"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100, ...) {
+data1 <- as.data.frame(mcols(methylation_data))
+data2 <- as.data.frame(mcols(annotation_file))
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
+return(run)
+})
+
+##############################################################################
+#' @rdname betaHMM
+#' @export
 setMethod("betaHMM",
 signature=signature(methylation_data="RangedSummarizedExperiment",
 annotation_file = "matrix"), definition = function(methylation_data,
@@ -132,6 +158,23 @@ run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
                     M = M, N = N, R = R, treatment_group = treatment_group,
                     parallel_process = parallel_process,
                     seed = seed,iterations=iterations, ...)
+return(run)
+})
+##############################################################################
+#' @rdname betaHMM
+#' @export
+setMethod("betaHMM",
+signature=signature(methylation_data="RangedSummarizedExperiment",
+annotation_file = "GRanges"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2, treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,...) {
+data1 <- assay(methylation_data)
+data2 <- as.data.frame(mcols(annotation_file))
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
 return(run)
 })
 
@@ -168,7 +211,22 @@ run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
                     seed = seed,iterations=iterations, ...)
 return(run)
 })
-
+##############################################################################
+#' @rdname betaHMM
+#' @export
+setMethod("betaHMM", signature = signature(methylation_data = "data.frame",
+annotation_file = "GRanges"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100,...) {
+data1 <- methylation_data
+data2 <- as.data.frame(mcols(annotation_file))
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
+return(run)
+})
 ##############################################################################
 #' @rdname betaHMM
 #' @export
@@ -187,6 +245,75 @@ run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
 return(run)
 })
 
+##############################################################################
+#' @rdname betaHMM
+#' @export
+setMethod("betaHMM", signature = signature(methylation_data = "matrix",
+annotation_file = "GRanges"), definition = function(methylation_data,
+annotation_file, M = 3, N = 4, R = 2,treatment_group = NULL,
+parallel_process = FALSE,
+seed = NULL,iterations=100,
+...) {
+data1 <- as.data.frame(methylation_data)
+data2 <- as.data.frame(mcols(annotation_file))
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
+return(run)
+})
+
+##############################################################################
+#' @rdname betaHMM
+#' @export
+setMethod("betaHMM",
+signature=signature(methylation_data="GRanges",
+annotation_file = "matrix"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100, ...) {
+data1 <- as.data.frame(mcols(methylation_data))
+data2 <- as.data.frame(annotation_file)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
+return(run)
+})
+##############################################################################
+#' @rdname betaHMM
+#' @export
+setMethod("betaHMM",
+signature=signature(methylation_data="GRanges",
+annotation_file = "data.frame"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100, ...) {
+data1 <- as.data.frame(mcols(methylation_data))
+data2 <- annotation_file
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
+return(run)
+})
+##############################################################################
+#' @rdname betaHMM
+#' @export
+setMethod("betaHMM",
+signature=signature(methylation_data="GRanges",
+annotation_file = "RangedSummarizedExperiment"),
+definition = function(methylation_data, annotation_file,
+M = 3, N = 4, R = 2, treatment_group = NULL, parallel_process = FALSE,
+seed = NULL,iterations=100, ...) {
+data1 <- as.data.frame(mcols(methylation_data))
+data2 <- assay(annotation_file)
+run <- betaHMMrun(methylation_data = data1, annotation_file = data2,
+M = M, N = N, R = R, treatment_group = treatment_group,
+parallel_process = parallel_process,
+seed = seed,iterations=iterations, ...)
+return(run)
+})
 ##############################################################################
 #' @rdname betaHMM
 #' @export
@@ -624,8 +751,6 @@ setMethod(f = "dmc_identification",
     definition = function(betaHMM_object, AUC_threshold = 0.8,
         uncertainty_threshold = 0.2, ...) {
 
-
-        # object <- x
         dmc_df <- dmc_identification_run(betaHMM_object = betaHMM_object,
             AUC_threshold = AUC_threshold,
             uncertainty_threshold = uncertainty_threshold,
@@ -655,7 +780,7 @@ setMethod(f = "dmc_identification",
 #' threshold_identification,data.frame-method
 #' @export
 #' @rdname threshold_identification
-#' @import methods
+#' @importFrom methods setMethod is as new
 #' @importFrom stats p.adjust
 #' @examples
 #' ## Use simulated data for the betaHMM workflow example

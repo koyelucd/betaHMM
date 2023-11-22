@@ -4,7 +4,16 @@
 \alias{BaumWelch}
 \title{HMM parameter estimation using Baum-Welch algorithm}
 \usage{
-BaumWelch(data, trained_params, M, N, R, seed = NULL, iterations = 100)
+BaumWelch(
+  data,
+  trained_params = NULL,
+  K,
+  M,
+  N,
+  R,
+  seed = NULL,
+  iterations = 100
+)
 }
 \arguments{
 \item{data}{A dataframe of dimension \eqn{C \times (N \times R)} containing
@@ -17,6 +26,8 @@ treatment groups each having \eqn{N} DNA samples.}
 \item tau - The initial distribution for the betaHMM model.
 \item phi - The shape parameters for the observation sequence data
 in the betaHMM model.}}
+
+\item{K}{The number of hidden states identified using the betaHMM model.}
 
 \item{M}{Number of methylation states to be identified in a single
 DNA sample.}

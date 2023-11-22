@@ -2,7 +2,7 @@ Package: betaHMM
 Type: Package
 Title: A Hidden Markov Model Approach for Identifying Differentially Methylated 
        Sites and Regions for Beta-Valued DNA Methylation Data
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(person("Koyel","Majumdar",email="koyel.majumdar@ucdconnect.ie",
         role=c("cre","aut"),comment = c(ORCID = "0000-0001-6469-488X")),
         person("Romina","Silva",
@@ -13,7 +13,7 @@ Authors@R: c(person("Koyel","Majumdar",email="koyel.majumdar@ucdconnect.ie",
         role="aut"),
         person("Isobel Claire","Gorley",email="claire.gormley@ucd.ie",
         role="aut", comment=c(ORCID="0000-0001-7713-681X")),
-        person("Thomas Brendan","Murphy",email="brendan.murphy@ucd.ie",
+        person("Thomas Brendan","Murphy",email="brendan.murphy@ucd.ie", 
         role="aut",comment=c(ORCID="0000-0002-5668-7046")),
         person("Florence","Jaffrezic",email="florence.jaffrezic@inrae.fr",
         role="aut"),
@@ -35,9 +35,10 @@ Imports: stats,
          cowplot,
          dplyr,
          tidyr,
+         tidyselect,
          stringr,
          utils
-Depends: R (>= 4.3.0), SummarizedExperiment, S4Vectors
+Depends: R (>= 4.3.0), SummarizedExperiment, S4Vectors, GenomicRanges
 RoxygenNote: 7.2.3
 biocViews: DNAMethylation, DifferentialMethylation, ImmunoOncology, 
            BiomedicalInformatics, MethylationArray, Software, 
@@ -46,6 +47,7 @@ biocViews: DNAMethylation, DifferentialMethylation, ImmunoOncology,
 Suggests: 
     rmarkdown,
     knitr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    BiocStyle
 VignetteBuilder: knitr
 Config/testthat/edition: 3

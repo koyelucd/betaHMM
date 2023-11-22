@@ -16,35 +16,40 @@
 #' @param tau The initial distribution for the betaHMM model.
 #' @param phi The shape parameters for the observation sequence data
 #' in the betaHMM model.
+#' @param K The number of hidden states identified using the betaHMM model.
 #' @return A vector containing the most probable sequence of the hidden states
 #' of the betaHMM model.
 #' @importFrom stats dbeta
 #'
 
-Viterbi <- function(data, M, N, R, tau, A, phi) {
-    K <- M^R
+Viterbi <- function(data, M, N, R, tau, A, phi,K) {
     C <- nrow(data)
     probabilities <- list()
     n1 <- 1
     n2 <- N[1]
     for (r in seq(1, R)) {
+        if(K==M)
+        {
+            sp1<-phi$sp_1
+            sp2<-phi$sp_2
+        }else{
+            sp1<-phi$sp_1[r, ]
+            sp2<-phi$sp_2[r, ]
+        }
         for (n in n1:n2) {
             probabilities[[n]] <- matrix(data[, n], ncol = K, nrow=nrow(data))
             probabilities[[n]] <- t(apply(X = probabilities[[n]], MARGIN = 1,
-                                            FUN = dbeta,
-                                            shape1 = phi$sp_1[r, ],
-                                            shape2 = phi$sp_2[r, ]))
+                                          FUN = dbeta,
+                                          shape1 = sp1,
+                                          shape2 = sp2))
         }
         if ((r + 1) <= R) {
             n1 <- n1 + N[r]
             n2 <- n2 + N[r + 1]
         }
     }
-    prob <- matrix(probabilities[[1]], nrow = C, ncol = K)
-    for (k in 2:ncol(data)) {
-        temp <- as.matrix(probabilities[[k]])
-        prob <- prob * temp
-    }
+    prob_list <- lapply(probabilities, as.matrix)
+    prob <- Reduce(`*`, prob_list[-1], init = prob_list[[1]])
     probabilities <- matrix(0, ncol = K, nrow = C)
     probabilities <- prob
     omega <- matrix(0, ncol = K, nrow = C)
