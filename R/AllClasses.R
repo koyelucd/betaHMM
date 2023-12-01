@@ -1,6 +1,7 @@
 #' @rdname betaHMMResults
 #' @export
 #' @importFrom methods setClass is as new
+#' @importFrom SummarizedExperiment assay
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 
 
@@ -54,7 +55,8 @@ betaHMMResults <- function(SummarizedExperiment,annotatedData) {
 
 #' @rdname dmrResults
 #' @export
-#' @import SummarizedExperiment
+#' @importFrom SummarizedExperiment assay
+#' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 
 setClass("dmrResults",
             contains = "RangedSummarizedExperiment")
@@ -106,6 +108,7 @@ dmrResults <- function(SummarizedExperiment) {
 #' @rdname dmcResults
 #' @export
 #' @importFrom methods setClass
+#' @importFrom SummarizedExperiment assay
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 
 
@@ -158,6 +161,7 @@ dmcResults <- function(SummarizedExperiment) {
 #' @rdname threshold_Results
 #' @export
 #' @importFrom methods setClass
+#' @importFrom SummarizedExperiment assay
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 
 

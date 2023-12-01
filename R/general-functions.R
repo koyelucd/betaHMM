@@ -59,6 +59,7 @@ globalVariables(c("betaHMMresults", "CHR", "IlmnID", "MAPINFO", "chr",
 #' @importFrom foreach foreach %dopar%
 #' @importFrom parallel makeCluster detectCores stopCluster
 #' @importFrom doParallel registerDoParallel
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @example inst/examples/betaHMM_package.R
 #'
 #'
@@ -203,6 +204,7 @@ betaHMMrun <- function(methylation_data, annotation_file, M, N, R,
 #' \item R The number of treatment groups to be compared.
 #' }
 #' @importFrom stats complete.cases
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @example inst/examples/betaHMM_package.R
 
 dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
@@ -314,6 +316,7 @@ dmc_identification_run <- function(betaHMM_object, AUC_threshold = 0.8,
 #' @importFrom foreach foreach %dopar%
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @example inst/examples/betaHMM_package.R
 
 dmr_identification_run <- function(dmc_identification_object, DMC_count = 2,

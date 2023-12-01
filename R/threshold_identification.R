@@ -28,6 +28,7 @@
 #'
 #' @importFrom stats kmeans
 #' @importFrom stats sd complete.cases
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @examples
 #' ## Use simulated data for the betaHMM workflow example
 #' set.seed(12345)
