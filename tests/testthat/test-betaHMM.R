@@ -87,9 +87,9 @@ test_that("iterations takes a numerical scalar value",{
 })
 
 test_that("M, N and R are scalar positive integers", {
-    expect_error(betaHMMrun(obj1, obj2, M=-3,N =-3,R=-3),
+    expect_error(betaHMMrun(obj1, obj2, M=-3,N =-3,R=-3,
                  treatment_group = NULL, parallel_process = FALSE,
-                 seed = NULL,iterations=100)
+                 seed = NULL,iterations=100))
     expect_error(betaHMMrun(obj1, obj2, M=matrix(rnorm(6), nrow=3),
                          N=matrix(rnorm(6), nrow=3),R=matrix(rnorm(6), nrow=3),
                          treatment_group = NULL, parallel_process = FALSE,
